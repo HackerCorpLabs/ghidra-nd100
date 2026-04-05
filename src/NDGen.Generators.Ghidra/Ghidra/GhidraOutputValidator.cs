@@ -491,8 +491,14 @@ namespace NDGen.Generators.Ghidra
         {
             try
             {
-                const string referenceProcessorPath = @"C:\Utils\Ghidra\ghidra_12.0.4_PUBLIC\Ghidra\Processors\68000";
-                
+                var ghidraInstallDir = Environment.GetEnvironmentVariable("GHIDRA_INSTALL_DIR");
+                if (string.IsNullOrWhiteSpace(ghidraInstallDir) || !Directory.Exists(ghidraInstallDir))
+                {
+                    // Ghidra installation not available - skip reference validation
+                    return true;
+                }
+                var referenceProcessorPath = Path.Combine(ghidraInstallDir, "Ghidra", "Processors", "68000");
+
                 if (!Directory.Exists(referenceProcessorPath))
                 {
                     // Reference processor not available - skip validation

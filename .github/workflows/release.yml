@@ -80,9 +80,14 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ steps.version.outputs.value }}"
-          $src = Get-ChildItem "ND-100/dist/ghidra_*_ND-100.zip" | Select-Object -First 1
-          $dst = "ND-100/dist/ghidra-nd100-${version}.zip"
-          Rename-Item $src.FullName $dst
+          $src = Get-ChildItem -File "ND-100/dist" -Filter "ghidra_*_ND-100.zip" | Select-Object -First 1
+          if (-not $src) {
+            throw "Extension zip not found in ND-100/dist — Gradle buildExtension likely failed."
+          }
+          $leafName = "ghidra-nd100-${version}.zip"
+          $dst = Join-Path $src.Directory.FullName $leafName
+          if (Test-Path $dst) { Remove-Item -Force $dst }
+          Rename-Item -Path $src.FullName -NewName $leafName
           Write-Host "Released as: $dst"
 
       - name: Create release
