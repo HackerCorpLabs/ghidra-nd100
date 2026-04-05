@@ -1,0 +1,8 @@
+# BFILL: Byte fill operation
+:BFILL is op16=0xC058 {
+    # BFILL: Byte fill operation
+    # Fills memory field with specified byte value
+    # TODO: Full implementation requires field manipulation using T register
+    # After execution, bit 15 of T points to end of field, field length = 0
+    # This is used for initializing memory areas with a constant value
+}

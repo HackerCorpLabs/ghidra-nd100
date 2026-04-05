@@ -1,0 +1,39 @@
+# BSKP: Skip next location if condition is true - Bit operation instructions
+# Based on C# emulator analysis from Instructions.BitOperationInstructions.cs:
+# - BSKP ZRO: Skip if bit = 0 (opcode "0175000" octal = 0xFD00)
+# - BSKP ONE: Skip if bit = 1 (opcode "0175200" octal = 0xFD80)
+# - BSKP BCM: Skip if bit ≠ K (opcode "0175400" octal = 0xFE00)
+# - BSKP BAC: Skip if bit = K (opcode "0175600" octal = 0xFE80)
+#
+# The C# implementation shows these increment P when condition is true
+# Format: bits 6-3 = bit number, bits 2-0 = register
+#
+# SLEIGH Limitation: 9-bit mask exceeds 8-bit limitation
+# However, we can implement this as documentation with correct P-code semantics
+
+# P-code implementation (documented - cannot compile due to 9-bit mask):
+# BSKP ZRO:
+# local reg_val:2 = GetRopRegister(dr);
+# local bit_is_zero:1 = ((reg_val >> bn) & 1) == 0;
+# if (bit_is_zero) P = P + 1;
+#
+# BSKP ONE:
+# local reg_val:2 = GetRopRegister(dr);
+# local bit_is_one:1 = ((reg_val >> bn) & 1) != 0;
+# if (bit_is_one) P = P + 1;
+#
+# BSKP BCM:
+# local reg_val:2 = GetRopRegister(dr);
+# local bit_val:1 = (reg_val >> bn) & 1;
+# if (bit_val != STS[K]) P = P + 1;
+#
+# BSKP BAC:
+# local reg_val:2 = GetRopRegister(dr);
+# local bit_val:1 = (reg_val >> bn) & 1;
+# if (bit_val == STS[K]) P = P + 1;
+#
+# Manual SLEIGH would require:
+# :BSKP_ZRO bn, dr is token_175000 & bn & dr {
+#     local bit_val:1 = (dr >> bn) & 1;
+#     if (bit_val == 0) { P = P + 1; }
+# }

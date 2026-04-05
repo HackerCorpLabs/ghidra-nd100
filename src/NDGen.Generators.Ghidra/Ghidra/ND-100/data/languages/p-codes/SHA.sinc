@@ -1,0 +1,24 @@
+# SHA: Shift A register - Non-contiguous mask instruction
+# YAML: mask "1111_1001_1000_0000", opcode "0154400" (octal)
+# Shift operations on A register with multi-shift flag
+#
+# Performs various shift operations on A register:
+# - Arithmetic left/right shifts
+# - Logical left/right shifts
+# - Rotate left/right with/without carry
+#
+# Every shift places last discarded bit in multi-shift flag (M).
+# M flag (bit 8 of STS register) can be input for next shift.
+#
+# P-code implementation (example for arithmetic right shift):
+# local shift_count:1 = shift_counter & 0x1F;
+# local last_bit:1 = 0;
+# for (i = 0; i < shift_count; i++) {
+#     last_bit = A & 1;
+#     A = A s>> 1;
+# }
+# STS[8,8] = last_bit;  # Set multi-shift flag
+#
+# SLEIGH Limitation: Cannot implement due to non-contiguous mask
+# Pattern "1111_1001_1000_0000" has gaps that cause conflicts
+# Manual implementation would require complex sub-table hierarchy

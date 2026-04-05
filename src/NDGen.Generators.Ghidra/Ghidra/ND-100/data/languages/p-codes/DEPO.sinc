@@ -1,0 +1,5 @@
+# DEPO: Deposit
+:DEPO is op16=0xD10F {
+    # TODO: Implement P-code for DEPO - Deposit
+    # This instruction performs a deposit operation
+}

@@ -1,0 +1,3 @@
+    # RDUSP: Read physical memory word without cache (ND-110/CX only)
+    # Uses T (bank number) and X (address within bank)
+    A = nd100_rdus(T, X);

@@ -1,0 +1,2 @@
+    # RDUS: Read word without using cache — address in T, result in A
+    A = nd100_rdus(T);

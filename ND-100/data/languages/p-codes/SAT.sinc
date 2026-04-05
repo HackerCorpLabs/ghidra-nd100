@@ -1,0 +1,2 @@
+    # 171000 octal = 0xF200, 8-bit mask
+    T = disp;

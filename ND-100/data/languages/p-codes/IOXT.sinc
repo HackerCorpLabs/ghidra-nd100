@@ -1,0 +1,3 @@
+    # IOXT: I/O execute with address from T register
+    # Reads: T (device address), A (data out); Writes: A (data in)
+    A = nd100_ioxt(T, A);

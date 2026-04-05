@@ -1,0 +1,2 @@
+    # DEPO: Deposit to physical memory — write T to address A+D
+    nd100_depo(A, D, T);

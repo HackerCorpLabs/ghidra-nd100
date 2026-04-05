@@ -1,0 +1,3 @@
+    # 176400 octal = 0xFD00, 9-bit mask
+    local mask:2 = 1 << bit4;                   # Create bit mask
+    STS[2,2] = (reg3 & mask) == 0;              # Load complement of bit to K

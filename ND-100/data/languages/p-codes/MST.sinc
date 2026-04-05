@@ -1,0 +1,3 @@
+    # MST: Masked set — set selected bits in system register using mask in A
+    local regsel:1 = reg4;
+    nd100_mst(regsel, A);

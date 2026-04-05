@@ -1,0 +1,3 @@
+    # 170400 octal = 0xF100, 8-bit mask
+    # disp is declared signed — SLEIGH auto-sign-extends to register size
+    A = disp;

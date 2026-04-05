@@ -1,0 +1,210 @@
+# ND-100 Addressing Mode Sub-Tables
+#
+# The ND-100 uses a 3-bit addressing mode field (bits 10-8) for memory reference
+# instructions with 5-bit masks. The bits are: X (bit 10), I (bit 9), B (bit 8).
+#
+# Three sub-tables:
+#   addr       - exports *:2 ea (memory value) for loads/stores/ALU
+#   jmp_addr   - exports *:2 ea (address for goto/call) — Ghidra extracts addr for arrows
+#   rel_target - P-relative only (conditional jumps) — resolved for arrows
+#
+# SLEIGH limitation: to get jump arrows, the target address must be computed at
+# disassembly time via [ reloc = inst_start + disp; ] and reloc must appear in display.
+# This means P-relative displays show resolved addresses (*0xNNNN), not raw displacement.
+# Ghidra may substitute label names (e.g., *FUN_ram_e8e0) — this is standard behavior.
+
+# ======================================================================
+# addr sub-table: exports MEMORY VALUE at effective address (*:2 ea)
+# Used by: LDA, STA, ADD, SUB, AND, ORA, MPY, MIN, LDD, STD, etc.
+# ======================================================================
+
+# Mode 0: P-relative (resolved at disassembly time)
+addr: "*"^reloc  is X_bit=0 & I_bit=0 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    export *:2 reloc;
+}
+
+# Mode 1: B-relative
+addr: disp^",B"  is X_bit=0 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + disp;
+    export *:2 ea;
+}
+
+# Mode 2: Indirect P-relative
+addr: "I *"^reloc  is X_bit=0 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    export *:2 ea;
+}
+
+# Mode 3: Indirect B-relative
+addr: "I "^disp^",B"  is X_bit=0 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    export *:2 ea;
+}
+
+# Mode 4: X-indexed
+addr: disp^",X"  is X_bit=1 & I_bit=0 & B_bit=0 & disp {
+    local ea:2 = X + disp;
+    export *:2 ea;
+}
+
+# Mode 5: B+X-indexed
+addr: disp^",B,X"  is X_bit=1 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + X + disp;
+    export *:2 ea;
+}
+
+# Mode 6: Indirect P-relative + X-indexed
+addr: ",X I *"^reloc  is X_bit=1 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    local result:2 = ea + X;
+    export *:2 result;
+}
+
+# Mode 7: Indirect B-relative + X-indexed
+addr: ",X I "^disp^",B"  is X_bit=1 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    local result:2 = ea + X;
+    export *:2 result;
+}
+
+# ======================================================================
+# ea_addr sub-table: exports RAW EFFECTIVE ADDRESS (not dereferenced)
+# Used by: LDD, STD, LDF, STF — multi-word instructions that need EA+1, EA+2
+# ======================================================================
+
+# Mode 0: P-relative (resolved at disassembly time)
+ea_addr: "*"^reloc  is X_bit=0 & I_bit=0 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    export ptr;
+}
+
+# Mode 1: B-relative
+ea_addr: disp^",B"  is X_bit=0 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + disp;
+    export ea;
+}
+
+# Mode 2: Indirect P-relative
+ea_addr: "I *"^reloc  is X_bit=0 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    export ea;
+}
+
+# Mode 3: Indirect B-relative
+ea_addr: "I "^disp^",B"  is X_bit=0 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    export ea;
+}
+
+# Mode 4: X-indexed
+ea_addr: disp^",X"  is X_bit=1 & I_bit=0 & B_bit=0 & disp {
+    local ea:2 = X + disp;
+    export ea;
+}
+
+# Mode 5: B+X-indexed
+ea_addr: disp^",B,X"  is X_bit=1 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + X + disp;
+    export ea;
+}
+
+# Mode 6: Indirect P-relative + X-indexed
+ea_addr: ",X I *"^reloc  is X_bit=1 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    local result:2 = ea + X;
+    export result;
+}
+
+# Mode 7: Indirect B-relative + X-indexed
+ea_addr: ",X I "^disp^",B"  is X_bit=1 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    local result:2 = ea + X;
+    export result;
+}
+
+# ======================================================================
+# jmp_addr sub-table: for JMP/JPL jump targets with addressing modes
+# Exports *:2 ea — parent uses "goto jmp_addr;" for Ghidra arrows
+# ======================================================================
+
+# Mode 0: P-relative (resolved at disassembly time → arrows)
+jmp_addr: "*"^reloc  is X_bit=0 & I_bit=0 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    export *:2 reloc;
+}
+
+# Mode 1: B-relative
+jmp_addr: disp^",B"  is X_bit=0 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + disp;
+    export *:2 ea;
+}
+
+# Mode 2: Indirect P-relative
+jmp_addr: "I *"^reloc  is X_bit=0 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    export *:2 ea;
+}
+
+# Mode 3: Indirect B-relative
+jmp_addr: "I "^disp^",B"  is X_bit=0 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    export *:2 ea;
+}
+
+# Mode 4: X-indexed
+jmp_addr: disp^",X"  is X_bit=1 & I_bit=0 & B_bit=0 & disp {
+    local ea:2 = X + disp;
+    export *:2 ea;
+}
+
+# Mode 5: B+X-indexed
+jmp_addr: disp^",B,X"  is X_bit=1 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + X + disp;
+    export *:2 ea;
+}
+
+# Mode 6: Indirect P-relative + X-indexed
+jmp_addr: ",X I *"^reloc  is X_bit=1 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    local result:2 = ea + X;
+    export *:2 result;
+}
+
+# Mode 7: Indirect B-relative + X-indexed
+jmp_addr: ",X I "^disp^",B"  is X_bit=1 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    local result:2 = ea + X;
+    export *:2 result;
+}
+
+# ======================================================================
+# rel_target sub-table: P-relative jump target (8-bit mask conditionals)
+# Single constructor — resolved at disassembly time for Ghidra arrows.
+# Used by: JAZ, JAN, JAP, JAF, JXZ, JXN, JNC, JPC, DNZ, NLZ
+# ======================================================================
+
+rel_target: "*"^reloc  is disp [ reloc = inst_start + disp; ] {
+    export *:2 reloc;
+}
+
+# ======================================================================
+# io_ref sub-table: I/O space address for IOX/IOT
+# Exports *[io_space]:2 so Ghidra creates references in io_space, not RAM.
+# Pattern follows 8051's SFR space approach (export *[SPACE]:size field).
+# ======================================================================
+
+# I/O reference: exports value at io_space address for Ghidra reference tracking
+io_ref: io_addr  is io_addr {
+    export *[io_space]:2 io_addr;
+}

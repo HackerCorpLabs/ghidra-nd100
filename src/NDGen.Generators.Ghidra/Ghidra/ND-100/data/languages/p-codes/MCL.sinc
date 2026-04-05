@@ -1,0 +1,41 @@
+# MCL: Masked clear - 12-bit mask instruction
+# YAML: mask "1111_1111_1111_0000", opcode "0150200" (octal)
+# Requires: Privileged mode operation
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.AccumulatorTransferInstructions.cs:124
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Register selection:
+#    - r = (AccumulatorTransferFromARegister)regs.fetched.atiRegister
+#    - Only supports STS (1), PID (6), PIE (7)
+#
+# 2. Masked clear operation:
+#    - STS: sts = sts & ~(A & 0xFF); WriteBits(sts); CheckInterrupt()
+#    - PID: TRR_PID(PID & ~A); checkit = true
+#    - PIE: TRR_PIE(PIE & ~A)
+#
+# 3. Special handling:
+#    - STS: Calls CheckForInterruptSTS_Z() after update
+#    - STS: Sets checkit = true to trigger interrupt processing
+#    - PID: Calls checkit = true to trigger interrupt re-evaluation
+#    - Detailed logging for debugging interrupt system
+#
+# 4. Error handling:
+#    - Unexpected register generates warning log message
+#
+# Uses A register as mask to clear bits in internal register.
+# Critical for interrupt control and status management.
+#
+# P-code implementation (documented - cannot compile due to 12-bit mask):
+# local reg_id:1 = inst[3,0];
+# local mask:2 = ~A;
+# switch (reg_id) {
+#   case 1: STS = (STS & mask) & 0xFF; call CheckInterruptZ; break;
+#   case 6: PID = PID & mask; call TriggerInterruptCheck; break;
+#   case 7: PIE = PIE & mask; break;
+#   default: call LogWarning("Invalid MCL register");
+# }
+#
+# SLEIGH Limitation: Cannot implement due to 12-bit mask
+# Manual implementation would require sub-tables for register enumeration

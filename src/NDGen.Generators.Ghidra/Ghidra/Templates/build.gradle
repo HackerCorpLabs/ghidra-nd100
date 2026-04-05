@@ -1,0 +1,50 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+def ghidraInstallDir = System.getenv('GHIDRA_INSTALL_DIR') ?: 'C:/Utils/Ghidra/ghidra_12.0.4_PUBLIC'
+
+dependencies {
+    compile fileTree(dir: "${ghidraInstallDir}/Ghidra/Framework", include: "**/*.jar")
+    compile fileTree(dir: "${ghidraInstallDir}/Ghidra/Features", include: "**/*.jar")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+// Build extension ZIP for Ghidra installation
+task buildExtension(type: Zip) {
+    archiveFileName = 'ND-100-Extension.zip'
+    destinationDirectory = file('dist')
+    
+    from('.') {
+        include 'extension.properties'
+        include 'Module.manifest'
+        include 'data/**'
+        include 'build.gradle'
+    }
+    
+    from('src/') {
+        into 'src/'
+    }
+    
+    dependsOn classes
+}
+
+// Make build also create the extension zip
+build.dependsOn buildExtension
+
+// Clean task
+clean {
+    delete 'dist'
+}

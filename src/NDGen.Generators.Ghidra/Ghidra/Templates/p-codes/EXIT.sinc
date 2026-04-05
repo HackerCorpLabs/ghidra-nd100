@@ -1,0 +1,3 @@
+    # EXIT: Return from subroutine (COPY SL DP = L -> P)
+    # Ref: DisAssembler.cs:263 — just transfers L to P register
+    return [L];                               # Return to address in L register

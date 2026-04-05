@@ -1,0 +1,5 @@
+:MON disp is op8=0xD6 & disp {  # 153000 octal = 0xD600, mask 1111_1111_0000_0000 (8 bits), pattern 0xD6
+    # MON: Monitor/OS call instruction
+    # Note: MON behavior depends on operating system context and specific disp value
+    # Simplified implementation - may trigger system call or supervisor mode
+}

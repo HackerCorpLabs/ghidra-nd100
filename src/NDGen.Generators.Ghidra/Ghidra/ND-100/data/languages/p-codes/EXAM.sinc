@@ -1,0 +1,5 @@
+# EXAM: Examine
+:EXAM is op16=0xD10E {
+    # TODO: Implement P-code for EXAM - Examine
+    # This instruction performs an examine operation
+}

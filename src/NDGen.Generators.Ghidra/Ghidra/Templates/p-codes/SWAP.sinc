@@ -1,0 +1,38 @@
+# SWAP - Register swap with CLD/CM1 modifiers
+# 144000 octal = 0xC800, 8-bit opcode (bits 15-8)
+# Bits 7=CM1, 6=CLD, 5-3=src, 2-0=dst
+#
+# Base:          dr <- sr
+# CLD:           dr <- sr; sr <- 0
+# CM1:           dr <- ~sr; sr <- dr  (complement of source used)
+# CM1+CLD:       dr <- ~sr; sr <- 0
+#
+# YAML combinations table:
+#   SWAP sr dr           dr <- sr
+#   SWAP CLD sr dr       dr <- sr; sr <- 0
+#   SWAP CM1 sr dr       dr <- sr; sr <- dr   (i.e. exchange)
+#   SWAP CM1 CLD sr dr   dr <- sr; sr <- 0
+
+:SWAP rop_src_d rop_dst_d is op8=0xC8 & rop_cm1=0 & rop_cld=0 & rop_src_d & rop_dst_d & rop_src & rop_dst {
+    # Plain SWAP: dr <- sr
+    rop_dst = rop_src;
+}
+
+:SWAP" CLD" rop_src_d rop_dst_d is op8=0xC8 & rop_cm1=0 & rop_cld=1 & rop_src_d & rop_dst_d & rop_src & rop_dst {
+    # SWAP CLD: dr <- sr; sr <- 0
+    rop_dst = rop_src;
+    rop_src = 0;
+}
+
+:SWAP" CM1" rop_src_d rop_dst_d is op8=0xC8 & rop_cm1=1 & rop_cld=0 & rop_src_d & rop_dst_d & rop_src & rop_dst {
+    # SWAP CM1: exchange dr <-> sr
+    local temp:2 = rop_src;
+    rop_src = rop_dst;
+    rop_dst = temp;
+}
+
+:SWAP" CM1 CLD" rop_src_d rop_dst_d is op8=0xC8 & rop_cm1=1 & rop_cld=1 & rop_src_d & rop_dst_d & rop_src & rop_dst {
+    # SWAP CM1 CLD: dr <- sr; sr <- 0
+    rop_dst = rop_src;
+    rop_src = 0;
+}

@@ -1,0 +1,4 @@
+    # 143302 octal = 0xC6C2, 10-bit mask
+    local ea:2 = X + disp3;                  # T/X addressing (X + 3-bit displacement)
+    A = *:2 ea;                              # Load A from memory location
+    D = *:2 (ea + 1);                        # Load D from memory location + 1

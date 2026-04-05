@@ -1,0 +1,3 @@
+    # SUBD: BCD subtraction — uses A+D (operand 1 descriptor), X+T (operand 2 descriptor)
+    # Skips next instruction on success
+    nd100_bcd_sub(A, D, T, X);

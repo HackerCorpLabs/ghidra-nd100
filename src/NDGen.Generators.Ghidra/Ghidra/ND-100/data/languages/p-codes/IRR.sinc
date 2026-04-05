@@ -1,0 +1,17 @@
+# IRR: Inter Register Read - 8-bit mask instruction
+# YAML: mask "1111_1111_1000_0000", opcode "153600" (octal)
+# Reads register from specified privilege level into A register
+#
+# P-code implementation:
+# A = read_register_from_level(level, register);
+#
+# SLEIGH implementation handles level and register selection
+:IRR level, reg_src is op8=0xD7 & level & reg_src {
+    # Inter-level register access (simplified)
+    # In real hardware, this accesses register bank for specific privilege level
+    # For analysis purposes, treat as register copy with privilege annotation
+    A = reg_src;
+
+    # Note: Full implementation would require privilege level checking
+    # and access to different register contexts per level
+}

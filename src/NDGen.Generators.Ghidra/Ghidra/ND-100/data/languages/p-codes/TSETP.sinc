@@ -1,0 +1,5 @@
+# TSETP: Test and set physical memory word
+:TSETP is op16=0xC152 {
+    # TODO: Implement P-code for TSETP - Test and set physical memory word
+    # This instruction tests and sets a physical memory word atomically
+}

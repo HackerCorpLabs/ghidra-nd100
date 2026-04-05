@@ -1,0 +1,5 @@
+# SETPT: Set page tables
+:SETPT is op16=0xC140 {
+    # TODO: Implement P-code for SETPT - Set page tables
+    # This instruction sets page table configuration
+}

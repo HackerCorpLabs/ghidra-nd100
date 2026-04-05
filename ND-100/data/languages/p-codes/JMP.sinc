@@ -1,0 +1,56 @@
+# JMP: Jump — 8 addressing mode constructors
+# Mode 0 (P-relative) uses jmp_addr sub-table for Ghidra arrows
+# All other modes use goto [ea] for computed/indirect targets
+
+# Mode 0: P-relative (uses jmp_addr sub-table for disassembly-resolved arrows)
+:JMP jmp_addr is op5=0x15 & X_bit=0 & I_bit=0 & B_bit=0 & jmp_addr {
+    goto jmp_addr;
+}
+
+# Mode 1: B-relative
+:JMP disp^",B" is op5=0x15 & X_bit=0 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + disp;
+    goto [ea];
+}
+
+# Mode 2: Indirect P-relative
+:JMP "I *"^reloc is op5=0x15 & X_bit=0 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    goto [ea];
+}
+
+# Mode 3: Indirect B-relative
+:JMP "I "^disp^",B" is op5=0x15 & X_bit=0 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    goto [ea];
+}
+
+# Mode 4: X-indexed
+:JMP disp^",X" is op5=0x15 & X_bit=1 & I_bit=0 & B_bit=0 & disp {
+    local ea:2 = X + disp;
+    goto [ea];
+}
+
+# Mode 5: B+X-indexed
+:JMP disp^",B,X" is op5=0x15 & X_bit=1 & I_bit=0 & B_bit=1 & disp {
+    local ea:2 = B + X + disp;
+    goto [ea];
+}
+
+# Mode 6: Indirect P-relative + X-indexed
+:JMP ",X I *"^reloc is op5=0x15 & X_bit=1 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    local target:2 = ea + X;
+    goto [target];
+}
+
+# Mode 7: Indirect B-relative + X-indexed
+:JMP ",X I "^disp^",B" is op5=0x15 & X_bit=1 & I_bit=1 & B_bit=1 & disp {
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    local target:2 = ea + X;
+    goto [target];
+}

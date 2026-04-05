@@ -1,0 +1,5 @@
+# ENPT: Enter segment in page tables
+:ENPT is op16=0xC146 {
+    # TODO: Implement P-code for ENPT - Enter segment in page tables
+    # This instruction enters a segment in the page table (see Appendix B for software description)
+}

@@ -1,0 +1,2 @@
+    # IOF: Disable interrupt system
+    IONI = 0;

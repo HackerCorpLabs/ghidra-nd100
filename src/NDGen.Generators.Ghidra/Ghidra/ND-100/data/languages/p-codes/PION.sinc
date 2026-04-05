@@ -1,0 +1,9 @@
+# PION: Memory Management and Interrupt System ON - 16-bit unique instruction
+# YAML: mask "1111_1111_1111_1111", opcode "150412" (octal)
+# Combines ION and PON functionality
+
+:PION is op16=0xD90A {  # 150412 octal = 0xD90A
+    # PION: Enable both memory management and interrupt systems
+    IONI = 1;  # Enable interrupt system
+    PONI = 1;  # Enable memory management system
+}

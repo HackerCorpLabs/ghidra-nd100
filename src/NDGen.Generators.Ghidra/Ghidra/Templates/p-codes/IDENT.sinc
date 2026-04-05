@@ -1,0 +1,7 @@
+# IDENT: Identify interrupt device — query device ID at priority level
+# C source: level = operand & 0x3F; gA = ident(level)
+# Full constructor to use level6 field (bits 5-0) instead of rop_src/rop_dst
+:IDENT level6 is op10=0x31E & level6 {
+    local level:1 = level6;
+    A = nd100_ident(level);
+}

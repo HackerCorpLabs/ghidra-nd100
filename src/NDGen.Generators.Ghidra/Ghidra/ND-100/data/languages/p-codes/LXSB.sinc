@@ -1,0 +1,7 @@
+# LXSB: Load the X register from the segment table bank (STBNK)
+:LXSB disp3 is op10=0x307 & disp3 & fixed3=0x4 {
+    # LXSB: Bank operation with B-relative addressing
+    local addr:2 = B + zext(disp3);           # B-relative addressing with 3-bit displacement
+    X = *:2 addr;                             # Load into X register from bank
+    # LXSB: Segment Table Bank (STB) - privileged memory management operation
+}

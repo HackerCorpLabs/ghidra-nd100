@@ -1,0 +1,5 @@
+# SBIT: Store the single bit accumulator (K) in a logical memory bit
+:SBIT is op16=0xC14A {
+    # TODO: Implement P-code for SBIT - Store the single bit accumulator (K) in a logical memory bit
+    # This instruction stores the K register bit to logical memory
+}

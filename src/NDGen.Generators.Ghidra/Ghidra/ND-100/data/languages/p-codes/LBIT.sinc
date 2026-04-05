@@ -1,0 +1,5 @@
+# LBIT: Load single bit accumulator (K) with logical memory bit
+:LBIT is op16=0xC148 {
+    # TODO: Implement P-code for LBIT - Load single bit accumulator (K) with logical memory bit
+    # This instruction loads the K register with a bit from logical memory
+}

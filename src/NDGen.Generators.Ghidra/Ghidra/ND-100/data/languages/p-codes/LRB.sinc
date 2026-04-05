@@ -1,0 +1,31 @@
+# LRB: Load register block - 10-bit mask instruction
+# YAML: mask "1111_1111_1100_0000", opcode "152600" (octal)
+# Requires: Privileged mode operation
+#
+# Loads memory block pointed to by X register into register block
+# of specified program level:
+#
+# P (level N) ← (ea)      # Program counter (except current level)
+# X (level N) ← (ea + 1)  # Index register
+# T (level N) ← (ea + 2)  # Temporary register
+# A (level N) ← (ea + 3)  # Accumulator
+# D (level N) ← (ea + 4)  # Data register
+# L (level N) ← (ea + 5)  # Link register
+# STS (level N) ← (ea + 6) # Status register
+# B (level N) ← (ea + 7)  # Base register
+#
+# Special case: If level == current level, P register unchanged
+#
+# P-code implementation:
+# local ea:2 = X;
+# if (level != current_level) { P_level = *:2 ea; }
+# X_level = *:2 (ea + 1);
+# T_level = *:2 (ea + 2);
+# A_level = *:2 (ea + 3);
+# D_level = *:2 (ea + 4);
+# L_level = *:2 (ea + 5);
+# STS_level = *:2 (ea + 6);
+# B_level = *:2 (ea + 7);
+#
+# SLEIGH Limitation: Cannot implement due to 10-bit mask
+# Manual implementation would require context switching between register banks

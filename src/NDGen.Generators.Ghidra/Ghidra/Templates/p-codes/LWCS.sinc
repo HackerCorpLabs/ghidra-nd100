@@ -1,0 +1,2 @@
+    # LWCS: Load writable control store — NOP on ND-110
+    nd100_lwcs();

@@ -1,0 +1,48 @@
+# RADD - Register add with modifiers
+# 0146000 octal = 0xCC00, 6-bit mask
+# Bits 9-8=AD mode, 7=CM1, 6=CLD, 5-3=src, 2-0=dst
+
+:RADD rop_src_d rop_dst_d is op5=0x19 & X_bit=1 & rop_ad & rop_cm1 & rop_cld & rop_src_d & rop_dst_d & rop_src & rop_dst {
+    # RADD: Register add with modifiers (CLD, CM1, AD1/ADC)
+    # Modifier bits: rop_ad(9-8)=AD mode, rop_cm1(7)=complement, rop_cld(6)=clear dst
+    # Raw token fields need local assignment for size resolution
+
+    local cm1:1 = rop_cm1;
+    local cld:1 = rop_cld;
+    local ad:1 = rop_ad;
+
+    # Prepare source operand (apply CM1)
+    local src_op:2 = rop_src;
+    if (cm1 == 0) goto <src_ready>;
+    src_op = ~rop_src;
+<src_ready>
+
+    # Prepare destination operand (apply CLD)
+    local dst_op:2 = rop_dst;
+    if (cld == 0) goto <dst_ready>;
+    dst_op = 0;
+<dst_ready>
+
+    # Determine addend from AD mode
+    local addend:2 = 0;
+    if (ad == 0) goto <do_add>;
+    if (ad == 2) goto <use_carry>;
+    # AD mode 01 = AD1: addend = 1
+    addend = 1;
+    goto <do_add>;
+<use_carry>
+    # AD mode 10 = ADC: addend = carry flag
+    addend = zext(STS[6,6]);
+<do_add>
+    # Perform addition: result = dst_op + src_op + addend
+    local tmp:4 = zext(dst_op) + zext(src_op) + zext(addend);
+    local result:2 = tmp:2;
+    rop_dst = result;
+    STS[6,6] = (tmp >> 16) != 0;                 # C = carry out
+    # O = signed overflow: signs of inputs match but result sign differs
+    local sign_a:1 = (dst_op >> 15) != 0;
+    local sign_b:1 = (src_op >> 15) != 0;
+    local sign_r:1 = (result >> 15) != 0;
+    STS[5,5] = (sign_a == sign_b) & (sign_r != sign_a);  # O (dynamic)
+    STS[4,4] = STS[4,4] | STS[5,5];              # Q = sticky overflow
+}

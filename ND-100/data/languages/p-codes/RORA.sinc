@@ -1,0 +1,2 @@
+    # 145400 octal = 0xCB00, 10-bit mask
+    rop_dst = rop_dst | rop_src;                 # Bitwise OR registers

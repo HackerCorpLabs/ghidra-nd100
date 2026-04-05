@@ -1,0 +1,4 @@
+    # 0130400 octal = 0xB100, 8-bit mask (jump)
+    if (A s>= 0) goto <no_jump>;              # Skip if A not negative
+    goto rel_target;
+<no_jump>

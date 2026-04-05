@@ -1,0 +1,6 @@
+    # JAZ: Jump if A is Zero
+    # Ref: Instructions.SequencingInstructions.cs:114 — STS.C = (A == 0); CJP(A == 0)
+    STS[6,6] = (A == 0);                     # Set carry flag to (A == 0)
+    if (A != 0) goto <no_jump>;               # Skip if A not zero
+    goto rel_target;
+<no_jump>

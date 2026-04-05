@@ -1,0 +1,5 @@
+# RGLOB: Examine global pointers
+:RGLOB is op16=0xC154 {
+    # TODO: Implement P-code for RGLOB - Examine global pointers
+    # This instruction reads global pointer information
+}

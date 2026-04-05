@@ -1,0 +1,7 @@
+:SKP disp is op5=0x18 & disp {  # 140000 octal = 0xC000, mask 1111_1000_1100_0000 (5 bits), pattern 0x18
+    # SKP: Skip next instruction conditionally
+    # Note: Full implementation requires condition field parsing from disp
+    # SLEIGH limitation: Cannot implement computed goto addresses
+    # Condition: Based on disp field bits, Target: inst_next + 2
+    # This instruction should conditionally skip the next instruction
+}

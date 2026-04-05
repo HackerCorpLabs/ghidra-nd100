@@ -1,0 +1,10 @@
+    # 146600 octal = 0xCD80, 10-bit mask
+    # RSUB: dr = dr - sr (RADD CM1 AD1 alias)
+    # C source: do_add(destination, ~source, 1) — sets C, O, Q
+    local old_dst:2 = rop_dst;
+    local comp:2 = ~rop_src;
+    local tmp:4 = zext(old_dst) + zext(comp) + 1;
+    rop_dst = tmp:2;
+    STS[6,6] = (tmp >> 16) != 0;              # C = carry out (1 = no borrow)
+    STS[5,5] = sborrow(old_dst, rop_src);     # O = signed overflow (dynamic)
+    STS[4,4] = STS[4,4] | sborrow(old_dst, rop_src); # Q = sticky overflow

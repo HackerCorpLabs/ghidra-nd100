@@ -1,0 +1,2 @@
+    # BFILL: Byte fill — fill field with byte from A, descriptor in T
+    nd100_bfill(A, T, X);

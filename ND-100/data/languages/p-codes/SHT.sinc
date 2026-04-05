@@ -1,0 +1,28 @@
+    # SHT: Shift T register — 4 types: Arithmetic/ROT/ZIN/LIN
+    # C source: ShiftReg(gT, operand)
+    local stype:2 = (shift_operand >> 7) & 3;
+    local sdir:2 = (shift_operand >> 5) & 1;
+    local cnt:2 = shift_operand & 0x1F;
+
+    if (sdir != 0) goto <right>;
+    if (stype == 1) goto <rot_left>;
+    T = T << cnt;
+    goto <done>;
+<rot_left>
+    local lcnt:2 = cnt & 0xF;
+    T = (T << lcnt) | (T >> (16 - lcnt));
+    goto <done>;
+
+<right>
+    local rcount:2 = 32 - cnt;
+    if (stype == 1) goto <rot_right>;
+    if (stype == 2) goto <zin_right>;
+    T = T s>> rcount;
+    goto <done>;
+<rot_right>
+    local rcnt:2 = rcount & 0xF;
+    T = (T >> rcnt) | (T << (16 - rcnt));
+    goto <done>;
+<zin_right>
+    T = T >> rcount;
+<done>

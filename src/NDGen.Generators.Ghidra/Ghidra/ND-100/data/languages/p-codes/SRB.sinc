@@ -1,0 +1,31 @@
+# SRB: Store register block - 10-bit mask instruction
+# YAML: mask "1111_1111_1100_0000", opcode "152402" (octal)
+# Requires: Privileged mode operation
+#
+# Stores register block of specified program level into memory block
+# pointed to by X register:
+#
+# (ea)     ← P (level N)   # Program counter
+# (ea + 1) ← X (level N)   # Index register
+# (ea + 2) ← T (level N)   # Temporary register
+# (ea + 3) ← A (level N)   # Accumulator
+# (ea + 4) ← D (level N)   # Data register
+# (ea + 5) ← L (level N)   # Link register
+# (ea + 6) ← STS (level N) # Status register
+# (ea + 7) ← B (level N)   # Base register
+#
+# Special case: If level == current level, P points to next instruction
+#
+# P-code implementation:
+# local ea:2 = X;
+# *:2 ea = P_level;
+# *:2 (ea + 1) = X_level;
+# *:2 (ea + 2) = T_level;
+# *:2 (ea + 3) = A_level;
+# *:2 (ea + 4) = D_level;
+# *:2 (ea + 5) = L_level;
+# *:2 (ea + 6) = STS_level;
+# *:2 (ea + 7) = B_level;
+#
+# SLEIGH Limitation: Cannot implement due to 10-bit mask
+# Manual implementation would require context switching between register banks

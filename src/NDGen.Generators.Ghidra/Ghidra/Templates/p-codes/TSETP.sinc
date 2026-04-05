@@ -1,0 +1,3 @@
+    # TSETP: Test and set physical memory — A = mem[T:X], then mem[T:X] = 0xFFFF
+    # C source: uses T (bank) and X (address) for physical access
+    A = nd100_tset(T, X);

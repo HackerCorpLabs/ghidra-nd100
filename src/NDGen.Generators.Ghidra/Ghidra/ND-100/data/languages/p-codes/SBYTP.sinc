@@ -1,0 +1,5 @@
+# SBYTP: Store a byte in physical memory
+:SBYTP is op16=0xC151 {
+    # TODO: Implement P-code for SBYTP - Store a byte in physical memory
+    # This instruction stores a byte to physical memory address
+}

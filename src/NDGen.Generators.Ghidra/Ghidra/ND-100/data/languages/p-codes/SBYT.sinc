@@ -1,0 +1,39 @@
+# SBYT: Store byte from A register to memory - 16-bit mask instruction
+# YAML: mask "1111_1111_1111_1111", opcode "142600" (octal)
+# Store byte from A register into character string
+#
+# Addressing: EL = (T) + (X)/2
+# - If LSB of X = 1: Store to right byte (bits 7-0)
+# - If LSB of X = 0: Store to left byte (bits 15-8)
+#
+# T contains base address of character string
+# X contains byte offset within string
+# A[7-0] stored to selected byte position
+#
+# P-code implementation:
+# local word_addr:2 = T + (X >> 1);
+# local word_data:2 = *:2 word_addr;
+# local byte_select:1 = X & 1;
+# local byte_val:1 = A & 0xFF;
+# if (byte_select == 0) {
+#     # Store to left byte (high byte of word)
+#     word_data = (word_data & 0x00FF) | (byte_val << 8);
+# } else {
+#     # Store to right byte (low byte of word)
+#     word_data = (word_data & 0xFF00) | byte_val;
+# }
+# *:2 word_addr = word_data;
+#
+# SLEIGH Limitation: Cannot implement due to 16-bit mask
+# Manual implementation would be:
+# :SBYT {
+#     local word_addr:2 = T + (X >> 1);
+#     local word_data:2 = *:2 word_addr;
+#     local byte_val:1 = A & 0xFF;
+#     if ((X & 1) == 0) {
+#         word_data = (word_data & 0x00FF) | (byte_val << 8);  # Left byte
+#     } else {
+#         word_data = (word_data & 0xFF00) | byte_val;         # Right byte
+#     }
+#     *:2 word_addr = word_data;
+# }

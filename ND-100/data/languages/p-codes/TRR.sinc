@@ -1,0 +1,3 @@
+    # TRR: Transfer A to system register
+    local regsel:1 = reg4;
+    nd100_trr(regsel, A);

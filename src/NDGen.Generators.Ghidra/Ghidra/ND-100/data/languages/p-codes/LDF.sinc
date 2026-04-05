@@ -1,0 +1,5 @@
+:LDF disp is op5=0x07 & disp {  # 034000 octal = 0x3800, mask 1111_1000_0000_0000 (5 bits), pattern 0x07
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    # LDF: Load value to D (Double precision or flags) - D = (EA)
+    D = *:2 addr;
+}

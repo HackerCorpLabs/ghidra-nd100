@@ -1,0 +1,5 @@
+# CLEPU: Clear page tables and collect PGU information
+:CLEPU is op16=0xC0C4 {
+    # TODO: Implement P-code for CLEPU - Clear page tables and collect PGU information
+    # This instruction clears page tables and collects Page Generation Unit information
+}

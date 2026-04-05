@@ -1,0 +1,5 @@
+# REX: Reset extended address mode
+:REX is op16=0xC153 {
+    # TODO: Implement P-code for REX - Reset extended address mode
+    # This instruction resets extended addressing mode
+}

@@ -1,0 +1,5 @@
+    # 140700 octal = 0xC1C0, 10-bit mask
+    # LASB: Bank operation with B-relative addressing
+    local ea:2 = B + disp3;              # B-relative addressing with 3-bit displacement
+    A = *:2 ea;                               # Load into A register from bank
+    # LASB: Bank type determined by instruction - Core Map Bank (CMB) or Segment Table Bank (STB)

@@ -1,0 +1,5 @@
+# CLNREENT: Clear non reentrant pages
+:CLNREENT is op16=0xC0C2 {
+    # TODO: Implement P-code for CLNREENT - Clear non reentrant pages
+    # This instruction clears non-reentrant page entries
+}

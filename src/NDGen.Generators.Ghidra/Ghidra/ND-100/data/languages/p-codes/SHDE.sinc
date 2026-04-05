@@ -1,0 +1,5 @@
+# SHDE: Decimal shift
+:SHDE is op16=0xC156 {
+    # TODO: Implement P-code for SHDE - Decimal shift
+    # This instruction performs decimal shift operations
+}

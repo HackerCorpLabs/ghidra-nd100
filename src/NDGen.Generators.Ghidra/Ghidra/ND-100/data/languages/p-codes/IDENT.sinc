@@ -1,0 +1,23 @@
+# IDENT: Transfer IDENT code of interrupting device - 10-bit mask instruction
+# YAML: mask "1111_1111_1100_0000", opcode "0143600" (octal)
+# Transfer highest priority device IDENT code to A register
+#
+# Transfers IDENT code of interrupting device with highest priority
+# on specified level to A register. Used in interrupt handlers.
+#
+# Supported interrupt levels:
+# - PL10: Level 10 (value 000004)
+# - PL11: Level 11 (value 000011)
+# - PL12: Level 12 (value 000022)
+# - PL13: Level 13 (value 000043)
+#
+# P-code implementation:
+# A = get_highest_priority_ident(level_code);
+# # Returns device identification code for interrupt handling
+#
+# SLEIGH Limitation: Cannot implement due to 10-bit mask
+# Manual implementation would require sub-tables for level selection
+# :IDENT level_code {
+#     A = interrupt_system_ident[level_code];
+#     # Read device IDENT from interrupt controller
+# }

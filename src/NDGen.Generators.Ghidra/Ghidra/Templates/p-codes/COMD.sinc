@@ -1,0 +1,3 @@
+    # COMD: BCD comparison — uses A+D (operand 1), X+T (operand 2)
+    # Result in A: 1 if op1>op2, -1 if op1<op2, 0 if equal; skips on success
+    A = nd100_bcd_cmp(A, D, T, X);

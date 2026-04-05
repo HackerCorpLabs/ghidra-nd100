@@ -1,0 +1,6 @@
+    # JPC: Increment X, jump if X positive or zero (bit 15 clear)
+    # Ref: Instructions.SequencingInstructions.cs:163-168 — X++; CJP(X bit 15 == 0)
+    X = X + 1;                                # Increment X first
+    if (X s< 0) goto <no_jump>;               # Skip if X negative (bit 15 set)
+    goto rel_target;                          # Jump if X positive/zero
+<no_jump>

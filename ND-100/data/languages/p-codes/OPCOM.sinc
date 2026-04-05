@@ -1,0 +1,2 @@
+    # OPCOM: Operator communication — halt CPU, enter operator mode
+    nd100_opcom();

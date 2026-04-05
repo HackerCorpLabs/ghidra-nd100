@@ -1,0 +1,5 @@
+    # 146200 octal = 0xCC80, 13-bit mask
+    STS[5,5] = sborrow(reg3, 1);           # O = signed overflow on decrement
+    STS[4,4] = STS[4,4] | STS[5,5];       # Q = sticky overflow
+    STS[6,6] = (reg3 != 0);               # C = no borrow
+    reg3 = reg3 - 1;                       # Decrement destination register

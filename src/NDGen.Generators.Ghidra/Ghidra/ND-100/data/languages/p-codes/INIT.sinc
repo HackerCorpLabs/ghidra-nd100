@@ -1,0 +1,21 @@
+# INIT: Initialize Stack - 16-bit unique instruction (no operands)
+# YAML: mask "1111_1111_1111_1111", opcode "0140134" (octal)
+# Complex stack initialization with multiple following parameters
+
+:INIT is op16=0xC05C {  # 0140134 octal = 0xC05C
+    # INIT: Initialize stack frame with complex parameter structure
+    # This is a complex instruction that reads multiple parameters from following addresses
+    # Format: INIT followed by parameters at consecutive addresses
+    #   [P+1]: number of words allocated to stack
+    #   [P+2]: address of stack start
+    #   [P+3]: maximum stack size
+    #   [P+4]: flag
+    #   [P+5]: address left empty
+    #   [P+6]: error return address
+    #   [P+7]: return address
+
+    # Simplified INIT - minimal implementation for SLEIGH
+    # Initialize basic stack frame and jump to return address
+    B = *:2 (inst_start + 4) + 0x80;                # Set B to stack start + 200₈
+    P = *:2 (inst_start + 14);                       # Jump to return address [P+7]
+}

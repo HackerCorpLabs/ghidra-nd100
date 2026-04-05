@@ -1,0 +1,5 @@
+    # 143303 octal = 0xC6C3, 10-bit mask
+    # LDBTX: B = (mem[X+disp] * 2) | 0xFE00
+    local ea:2 = X + disp3;                  # T/X addressing (X + 3-bit displacement)
+    local val:2 = *:2 ea;
+    B = (val << 1) | 0xFE00;                 # Double and mask for stack pointer format

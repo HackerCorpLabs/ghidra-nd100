@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<processor_spec>
+  <programcounter register="P"/>
+  
+  <!-- Register data for ND-100 processor registers -->
+  <register_data>      
+    <!-- Current Active Registers (context-sensitive aliases) -->
+    <register name="A"/>       <!-- Current Accumulator -->
+    <register name="D"/>       <!-- Current Extension register -->
+    <register name="T"/>       <!-- Current Temporary register -->
+    <register name="L"/>       <!-- Current Link register -->
+    <register name="X"/>       <!-- Current Index register -->
+    <register name="B"/>       <!-- Current Base register -->
+    <register name="P"/>       <!-- Current Program counter -->
+    
+    <!-- Status Register Components -->
+    <register name="STS"/>     <!-- Status register -->
+    
+    <!-- Status Register Individual Flags -->
+    <register name="C"/>       <!-- Carry flag -->
+    <register name="Q"/>       <!-- Dynamic overflow flag -->
+    <register name="O"/>       <!-- Static overflow flag -->
+    <register name="Z"/>       <!-- Error flag -->
+    <register name="K"/>       <!-- One-bit accumulator -->
+    <register name="TG"/>      <!-- Rounding flag for FP -->
+    <register name="M"/>       <!-- Multi-shift link flag -->
+    <register name="PTM"/>     <!-- Page table modus flag -->
+    
+    <!-- Program Level Control -->
+    <register name="PIL"/>     <!-- Program Interrupt Level (0-15) -->
+    <register name="PVL"/>     <!-- Previous interrupt Level -->
+    
+    <!-- System Status Indicators -->
+    <register name="IONI"/>    <!-- Interrupt system ON -->
+    <register name="PONI"/>    <!-- Memory management ON -->
+    <register name="SEXI"/>    <!-- Extended addressing mode -->
+    <register name="N100"/>    <!-- ND-100 machine indicator -->
+    
+    <!-- Operator Panel Registers -->
+    <register name="PANS"/>    <!-- Panel Status register (read-only) -->
+    <register name="PANC"/>    <!-- Panel Control register (write-only) -->
+    <register name="LMP"/>     <!-- Lamp register (write-only) -->
+    <register name="OPR"/>     <!-- Operator Panel Switch register (read-only) -->
+    <register name="ALD"/>     <!-- Automatic Load Descriptor -->
+    
+    <!-- External Interrupt System -->
+    <register name="PID"/>     <!-- Priority Interrupt Detect -->
+    <register name="PIE"/>     <!-- Priority Interrupt Enable -->
+    <register name="PK"/>      <!-- Priority interrupt code (calculated) -->
+    
+    <!-- Internal Interrupt System -->
+    <register name="IID"/>     <!-- Internal Interrupt Detect -->
+    <register name="IIE"/>     <!-- Internal Interrupt Enable -->
+    <register name="IIC"/>     <!-- Internal Interrupt Code (0-12) -->
+   
+    <!-- Additional MMS Registers -->
+    <register name="PGS"/>     <!-- Paging Status register -->
+    <register name="PGC"/>     <!-- Page Control register -->
+    <register name="PEA"/>     <!-- Page Error Address -->
+    <register name="PES"/>     <!-- Page Error Status -->
+    
+    <!-- Cache Control Registers (ND-110 and later) -->
+    <register name="CSR"/>     <!-- Cache Status Register -->
+    <register name="LCIL"/>    <!-- Lower Cache Inhibit Limit -->
+    <register name="UCIL"/>    <!-- Upper Cache Inhibit Limit -->
+    <register name="CCL"/>     <!-- Cache Clear register -->
+    <register name="CILP"/>    <!-- Cache Inhibit Page register -->
+    
+    <!-- Error Correction Code Register (ND-110 and later) -->
+    <register name="ECCR"/>    <!-- ECC Register -->
+    
+    <!-- Control Store Registers (ND-110 and later) -->
+    <register name="CS"/>      <!-- Control Store register -->
+    
+    <!-- Effective Address (computed during instruction execution) -->
+    <register name="EA"/>      <!-- Effective Address -->
+    
+    <!-- CPU State Register -->
+    <register name="STATE"/>   <!-- CPU Run State (RUN/STOP/HALT/OPCOM) -->
+  </register_data>
+  
+  <!-- Mark I/O space as volatile (side-effectful reads/writes) -->
+  <volatile outputop="write_volatile" inputop="read_volatile">
+    <range space="io_space" first="0x0" last="0xFFFF"/>
+  </volatile>
+
+  <!-- Default symbol definitions -->
+  <default_symbols>
+    <!-- Reset and interrupt vectors -->
+    <symbol name="Reset" address="0x0000"/>
+    <symbol name="PowerFail" address="0x0002"/>
+    <symbol name="MemoryParity" address="0x0004"/>
+    <symbol name="MemoryOutOfRange" address="0x0006"/>
+    <symbol name="IOXError" address="0x0008"/>
+    <symbol name="PrivilegedInstruction" address="0x000A"/>
+    <symbol name="ErrorIndicator" address="0x000C"/>
+    <symbol name="IllegalInstruction" address="0x000E"/>
+    <symbol name="PageFault" address="0x0010"/>
+    <symbol name="ProtectViolation" address="0x0012"/>
+    <symbol name="MonitorCall" address="0x0014"/>
+
+    <!-- Standard SINTRAN III addresses -->
+    <symbol name="SINTRAN_RT11" address="0x0020"/>
+    <symbol name="SINTRAN_MON" address="0x0100"/>
+    <symbol name="SINTRAN_EXEC" address="0x0200"/>
+
+    <!-- Memory management addresses -->
+    <symbol name="PAGE_TABLE_BASE" address="0x7400"/>
+    <symbol name="ALT_PAGE_TABLE_BASE" address="0x7500"/>
+
+    <!-- Common ROM/Monitor addresses -->
+    <symbol name="MONITOR_START" address="0x7000"/>
+    <symbol name="BOOTSTRAP_START" address="0x7700"/>
+
+    <!-- I/O Device Registers (io_space)               -->
+    <!-- io_space is word-addressed (wordsize=2)        -->
+    <!-- AUTO-GENERATED from specs/io-devices.json      -->
+
+    <!-- Real-Time Clock 1 (octal 010-013, level 13, ident 01) -->
+    <symbol name="RTC1_READ_DATA" address="io_space:0x8"/>
+    <symbol name="RTC1_CLEAR_COUNTER" address="io_space:0x9"/>
+    <symbol name="RTC1_READ_STATUS" address="io_space:0xA"/>
+    <symbol name="RTC1_WRITE_CONTROL" address="io_space:0xB"/>
+
+    <!-- Real-Time Clock 2 (octal 014-017, level 13, ident 02) -->
+    <symbol name="RTC2_READ_DATA" address="io_space:0xC"/>
+    <symbol name="RTC2_CLEAR_COUNTER" address="io_space:0xD"/>
+    <symbol name="RTC2_READ_STATUS" address="io_space:0xE"/>
+    <symbol name="RTC2_WRITE_CONTROL" address="io_space:0xF"/>
+
+    <!-- Real-Time Clock 3 (octal 020-023, level 13, ident 06) -->
+    <symbol name="RTC3_READ_DATA" address="io_space:0x10"/>
+    <symbol name="RTC3_CLEAR_COUNTER" address="io_space:0x11"/>
+    <symbol name="RTC3_READ_STATUS" address="io_space:0x12"/>
+    <symbol name="RTC3_WRITE_CONTROL" address="io_space:0x13"/>
+
+    <!-- Terminal Console (Terminal 1) (octal 0300-0307, level 10/12, ident 01) -->
+    <symbol name="CON_READ_INPUT" address="io_space:0xC0"/>
+    <symbol name="CON_WRITE_NOP" address="io_space:0xC1"/>
+    <symbol name="CON_READ_INPUT_STATUS" address="io_space:0xC2"/>
+    <symbol name="CON_WRITE_INPUT_CTRL" address="io_space:0xC3"/>
+    <symbol name="CON_READ_ZERO" address="io_space:0xC4"/>
+    <symbol name="CON_WRITE_DATA" address="io_space:0xC5"/>
+    <symbol name="CON_READ_OUTPUT_STATUS" address="io_space:0xC6"/>
+    <symbol name="CON_WRITE_OUTPUT_CTRL" address="io_space:0xC7"/>
+
+    <!-- Paper Tape Reader 1 (octal 0400-0403, level 12, ident 02) -->
+    <symbol name="PTR1_READ_DATA" address="io_space:0x100"/>
+    <symbol name="PTR1_WRITE_DATA" address="io_space:0x101"/>
+    <symbol name="PTR1_READ_STATUS" address="io_space:0x102"/>
+    <symbol name="PTR1_WRITE_CONTROL" address="io_space:0x103"/>
+
+    <!-- Paper Tape Reader 2 (octal 0404-0407, level 12, ident 022) -->
+    <symbol name="PTR2_READ_DATA" address="io_space:0x104"/>
+    <symbol name="PTR2_WRITE_DATA" address="io_space:0x105"/>
+    <symbol name="PTR2_READ_STATUS" address="io_space:0x106"/>
+    <symbol name="PTR2_WRITE_CONTROL" address="io_space:0x107"/>
+
+    <!-- Line Printer 3 (octal 0160-0163, level 10, ident 035) -->
+    <symbol name="LP3_READ_DATA" address="io_space:0x70"/>
+    <symbol name="LP3_WRITE_DATA" address="io_space:0x71"/>
+    <symbol name="LP3_READ_STATUS" address="io_space:0x72"/>
+    <symbol name="LP3_WRITE_CONTROL" address="io_space:0x73"/>
+
+    <!-- Line Printer 4 (octal 0164-0167, level 10, ident 036) -->
+    <symbol name="LP4_READ_DATA" address="io_space:0x74"/>
+    <symbol name="LP4_WRITE_DATA" address="io_space:0x75"/>
+    <symbol name="LP4_READ_STATUS" address="io_space:0x76"/>
+    <symbol name="LP4_WRITE_CONTROL" address="io_space:0x77"/>
+
+    <!-- Line Printer 5 (octal 0170-0173, level 10, ident 033) -->
+    <symbol name="LP5_READ_DATA" address="io_space:0x78"/>
+    <symbol name="LP5_WRITE_DATA" address="io_space:0x79"/>
+    <symbol name="LP5_READ_STATUS" address="io_space:0x7A"/>
+    <symbol name="LP5_WRITE_CONTROL" address="io_space:0x7B"/>
+
+    <!-- Line Printer 6 (octal 0174-0177, level 10, ident 032) -->
+    <symbol name="LP6_READ_DATA" address="io_space:0x7C"/>
+    <symbol name="LP6_WRITE_DATA" address="io_space:0x7D"/>
+    <symbol name="LP6_READ_STATUS" address="io_space:0x7E"/>
+    <symbol name="LP6_WRITE_CONTROL" address="io_space:0x7F"/>
+
+    <!-- Line Printer 1 (octal 0430-0433, level 10, ident 03) -->
+    <symbol name="LP1_READ_DATA" address="io_space:0x118"/>
+    <symbol name="LP1_WRITE_DATA" address="io_space:0x119"/>
+    <symbol name="LP1_READ_STATUS" address="io_space:0x11A"/>
+    <symbol name="LP1_WRITE_CONTROL" address="io_space:0x11B"/>
+
+    <!-- Line Printer 2 (octal 0434-0437, level 10, ident 023) -->
+    <symbol name="LP2_READ_DATA" address="io_space:0x11C"/>
+    <symbol name="LP2_WRITE_DATA" address="io_space:0x11D"/>
+    <symbol name="LP2_READ_STATUS" address="io_space:0x11E"/>
+    <symbol name="LP2_WRITE_CONTROL" address="io_space:0x11F"/>
+
+    <!-- SMD Disk Controller 3 (octal 0540-0547, level 11, ident 023) -->
+    <symbol name="SMD3_READ_MEM_ADDR" address="io_space:0x160"/>
+    <symbol name="SMD3_LOAD_MEM_ADDR" address="io_space:0x161"/>
+    <symbol name="SMD3_READ_SEEK_COND" address="io_space:0x162"/>
+    <symbol name="SMD3_LOAD_BLOCK_ADDR" address="io_space:0x163"/>
+    <symbol name="SMD3_READ_STATUS" address="io_space:0x164"/>
+    <symbol name="SMD3_LOAD_CONTROL" address="io_space:0x165"/>
+    <symbol name="SMD3_READ_BLOCK_ADDR" address="io_space:0x166"/>
+    <symbol name="SMD3_LOAD_WORD_COUNT" address="io_space:0x167"/>
+
+    <!-- SMD Disk Controller 4 (octal 0550-0557, level 11, ident 06) -->
+    <symbol name="SMD4_READ_MEM_ADDR" address="io_space:0x168"/>
+    <symbol name="SMD4_LOAD_MEM_ADDR" address="io_space:0x169"/>
+    <symbol name="SMD4_READ_SEEK_COND" address="io_space:0x16A"/>
+    <symbol name="SMD4_LOAD_BLOCK_ADDR" address="io_space:0x16B"/>
+    <symbol name="SMD4_READ_STATUS" address="io_space:0x16C"/>
+    <symbol name="SMD4_LOAD_CONTROL" address="io_space:0x16D"/>
+    <symbol name="SMD4_READ_BLOCK_ADDR" address="io_space:0x16E"/>
+    <symbol name="SMD4_LOAD_WORD_COUNT" address="io_space:0x16F"/>
+
+    <!-- ND-500 Interface 1 (octal 060-077, level 12, ident 016) -->
+    <symbol name="ND500_1_READ_MAR" address="io_space:0x30"/>
+    <symbol name="ND500_1_LOAD_MAR" address="io_space:0x31"/>
+    <symbol name="ND500_1_READ_STATUS" address="io_space:0x32"/>
+    <symbol name="ND500_1_LOAD_STATUS" address="io_space:0x33"/>
+    <symbol name="ND500_1_READ_CONTROL" address="io_space:0x34"/>
+    <symbol name="ND500_1_LOAD_CONTROL" address="io_space:0x35"/>
+    <symbol name="ND500_1_MASTER_CLEAR" address="io_space:0x36"/>
+    <symbol name="ND500_1_TERMINATE" address="io_space:0x37"/>
+    <symbol name="ND500_1_READ_TAG_IN" address="io_space:0x38"/>
+    <symbol name="ND500_1_WRITE_TAG_OUT" address="io_space:0x39"/>
+    <symbol name="ND500_1_READ_LOWER_LIM" address="io_space:0x3A"/>
+    <symbol name="ND500_1_WRITE_DATAX" address="io_space:0x3B"/>
+    <symbol name="ND500_1_READ_LOCKED1" address="io_space:0x3C"/>
+    <symbol name="ND500_1_WRITE_DATA" address="io_space:0x3D"/>
+    <symbol name="ND500_1_READ_LOCKED2" address="io_space:0x3E"/>
+    <symbol name="ND500_1_RETURN_GATE" address="io_space:0x3F"/>
+
+    <!-- ND-500 Interface 5 (octal 0560-0577, level 12, ident 076) -->
+    <symbol name="ND500_5_READ_MAR" address="io_space:0x170"/>
+    <symbol name="ND500_5_LOAD_MAR" address="io_space:0x171"/>
+    <symbol name="ND500_5_READ_STATUS" address="io_space:0x172"/>
+    <symbol name="ND500_5_LOAD_STATUS" address="io_space:0x173"/>
+    <symbol name="ND500_5_READ_CONTROL" address="io_space:0x174"/>
+    <symbol name="ND500_5_LOAD_CONTROL" address="io_space:0x175"/>
+    <symbol name="ND500_5_MASTER_CLEAR" address="io_space:0x176"/>
+    <symbol name="ND500_5_TERMINATE" address="io_space:0x177"/>
+    <symbol name="ND500_5_READ_TAG_IN" address="io_space:0x178"/>
+    <symbol name="ND500_5_WRITE_TAG_OUT" address="io_space:0x179"/>
+    <symbol name="ND500_5_READ_LOWER_LIM" address="io_space:0x17A"/>
+    <symbol name="ND500_5_WRITE_DATAX" address="io_space:0x17B"/>
+    <symbol name="ND500_5_READ_LOCKED1" address="io_space:0x17C"/>
+    <symbol name="ND500_5_WRITE_DATA" address="io_space:0x17D"/>
+    <symbol name="ND500_5_READ_LOCKED2" address="io_space:0x17E"/>
+    <symbol name="ND500_5_RETURN_GATE" address="io_space:0x17F"/>
+
+    <!-- ND-500 Interface 3 (octal 0660-0677, level 12, ident 036) -->
+    <symbol name="ND500_3_READ_MAR" address="io_space:0x1B0"/>
+    <symbol name="ND500_3_LOAD_MAR" address="io_space:0x1B1"/>
+    <symbol name="ND500_3_READ_STATUS" address="io_space:0x1B2"/>
+    <symbol name="ND500_3_LOAD_STATUS" address="io_space:0x1B3"/>
+    <symbol name="ND500_3_READ_CONTROL" address="io_space:0x1B4"/>
+    <symbol name="ND500_3_LOAD_CONTROL" address="io_space:0x1B5"/>
+    <symbol name="ND500_3_MASTER_CLEAR" address="io_space:0x1B6"/>
+    <symbol name="ND500_3_TERMINATE" address="io_space:0x1B7"/>
+    <symbol name="ND500_3_READ_TAG_IN" address="io_space:0x1B8"/>
+    <symbol name="ND500_3_WRITE_TAG_OUT" address="io_space:0x1B9"/>
+    <symbol name="ND500_3_READ_LOWER_LIM" address="io_space:0x1BA"/>
+    <symbol name="ND500_3_WRITE_DATAX" address="io_space:0x1BB"/>
+    <symbol name="ND500_3_READ_LOCKED1" address="io_space:0x1BC"/>
+    <symbol name="ND500_3_WRITE_DATA" address="io_space:0x1BD"/>
+    <symbol name="ND500_3_READ_LOCKED2" address="io_space:0x1BE"/>
+    <symbol name="ND500_3_RETURN_GATE" address="io_space:0x1BF"/>
+
+    <!-- ND-500 Interface 4 (octal 0760-0777, level 12, ident 0114) -->
+    <symbol name="ND500_4_READ_MAR" address="io_space:0x1F0"/>
+    <symbol name="ND500_4_LOAD_MAR" address="io_space:0x1F1"/>
+    <symbol name="ND500_4_READ_STATUS" address="io_space:0x1F2"/>
+    <symbol name="ND500_4_LOAD_STATUS" address="io_space:0x1F3"/>
+    <symbol name="ND500_4_READ_CONTROL" address="io_space:0x1F4"/>
+    <symbol name="ND500_4_LOAD_CONTROL" address="io_space:0x1F5"/>
+    <symbol name="ND500_4_MASTER_CLEAR" address="io_space:0x1F6"/>
+    <symbol name="ND500_4_TERMINATE" address="io_space:0x1F7"/>
+    <symbol name="ND500_4_READ_TAG_IN" address="io_space:0x1F8"/>
+    <symbol name="ND500_4_WRITE_TAG_OUT" address="io_space:0x1F9"/>
+    <symbol name="ND500_4_READ_LOWER_LIM" address="io_space:0x1FA"/>
+    <symbol name="ND500_4_WRITE_DATAX" address="io_space:0x1FB"/>
+    <symbol name="ND500_4_READ_LOCKED1" address="io_space:0x1FC"/>
+    <symbol name="ND500_4_WRITE_DATA" address="io_space:0x1FD"/>
+    <symbol name="ND500_4_READ_LOCKED2" address="io_space:0x1FE"/>
+    <symbol name="ND500_4_RETURN_GATE" address="io_space:0x1FF"/>
+
+    <!-- ND-500 Interface 2 (octal 01060-01077, level 12, ident 0116) -->
+    <symbol name="ND500_2_READ_MAR" address="io_space:0x230"/>
+    <symbol name="ND500_2_LOAD_MAR" address="io_space:0x231"/>
+    <symbol name="ND500_2_READ_STATUS" address="io_space:0x232"/>
+    <symbol name="ND500_2_LOAD_STATUS" address="io_space:0x233"/>
+    <symbol name="ND500_2_READ_CONTROL" address="io_space:0x234"/>
+    <symbol name="ND500_2_LOAD_CONTROL" address="io_space:0x235"/>
+    <symbol name="ND500_2_MASTER_CLEAR" address="io_space:0x236"/>
+    <symbol name="ND500_2_TERMINATE" address="io_space:0x237"/>
+    <symbol name="ND500_2_READ_TAG_IN" address="io_space:0x238"/>
+    <symbol name="ND500_2_WRITE_TAG_OUT" address="io_space:0x239"/>
+    <symbol name="ND500_2_READ_LOWER_LIM" address="io_space:0x23A"/>
+    <symbol name="ND500_2_WRITE_DATAX" address="io_space:0x23B"/>
+    <symbol name="ND500_2_READ_LOCKED1" address="io_space:0x23C"/>
+    <symbol name="ND500_2_WRITE_DATA" address="io_space:0x23D"/>
+    <symbol name="ND500_2_READ_LOCKED2" address="io_space:0x23E"/>
+    <symbol name="ND500_2_RETURN_GATE" address="io_space:0x23F"/>
+
+    <!-- SMD Disk Controller 1 (octal 01540-01547, level 11, ident 017) -->
+    <symbol name="SMD1_READ_MEM_ADDR" address="io_space:0x360"/>
+    <symbol name="SMD1_LOAD_MEM_ADDR" address="io_space:0x361"/>
+    <symbol name="SMD1_READ_SEEK_COND" address="io_space:0x362"/>
+    <symbol name="SMD1_LOAD_BLOCK_ADDR" address="io_space:0x363"/>
+    <symbol name="SMD1_READ_STATUS" address="io_space:0x364"/>
+    <symbol name="SMD1_LOAD_CONTROL" address="io_space:0x365"/>
+    <symbol name="SMD1_READ_BLOCK_ADDR" address="io_space:0x366"/>
+    <symbol name="SMD1_LOAD_WORD_COUNT" address="io_space:0x367"/>
+
+    <!-- SMD Disk Controller 2 (octal 01550-01557, level 11, ident 020) -->
+    <symbol name="SMD2_READ_MEM_ADDR" address="io_space:0x368"/>
+    <symbol name="SMD2_LOAD_MEM_ADDR" address="io_space:0x369"/>
+    <symbol name="SMD2_READ_SEEK_COND" address="io_space:0x36A"/>
+    <symbol name="SMD2_LOAD_BLOCK_ADDR" address="io_space:0x36B"/>
+    <symbol name="SMD2_READ_STATUS" address="io_space:0x36C"/>
+    <symbol name="SMD2_LOAD_CONTROL" address="io_space:0x36D"/>
+    <symbol name="SMD2_READ_BLOCK_ADDR" address="io_space:0x36E"/>
+    <symbol name="SMD2_LOAD_WORD_COUNT" address="io_space:0x36F"/>
+
+    <!-- Floppy DMA Controller 1 (octal 01560-01567, level 11, ident 021) -->
+    <symbol name="FLP1_READ_DATA" address="io_space:0x370"/>
+    <symbol name="FLP1_UNUSED1" address="io_space:0x371"/>
+    <symbol name="FLP1_READ_STATUS1" address="io_space:0x372"/>
+    <symbol name="FLP1_LOAD_CONTROL" address="io_space:0x373"/>
+    <symbol name="FLP1_READ_STATUS2" address="io_space:0x374"/>
+    <symbol name="FLP1_LOAD_PTR_HI" address="io_space:0x375"/>
+    <symbol name="FLP1_UNUSED6" address="io_space:0x376"/>
+    <symbol name="FLP1_LOAD_PTR_LO" address="io_space:0x377"/>
+
+    <!-- Floppy DMA Controller 2 (octal 01570-01577, level 11, ident 022) -->
+    <symbol name="FLP2_READ_DATA" address="io_space:0x378"/>
+    <symbol name="FLP2_UNUSED1" address="io_space:0x379"/>
+    <symbol name="FLP2_READ_STATUS1" address="io_space:0x37A"/>
+    <symbol name="FLP2_LOAD_CONTROL" address="io_space:0x37B"/>
+    <symbol name="FLP2_READ_STATUS2" address="io_space:0x37C"/>
+    <symbol name="FLP2_LOAD_PTR_HI" address="io_space:0x37D"/>
+    <symbol name="FLP2_UNUSED6" address="io_space:0x37E"/>
+    <symbol name="FLP2_LOAD_PTR_LO" address="io_space:0x37F"/>
+
+    <!-- HDLC/Megalink 1 (octal 01640-01657, level 12/13, ident 0150) -->
+    <symbol name="HDLC1_RX_DATA" address="io_space:0x3A0"/>
+    <symbol name="HDLC1_PCR" address="io_space:0x3A1"/>
+    <symbol name="HDLC1_RX_STATUS" address="io_space:0x3A2"/>
+    <symbol name="HDLC1_SAR" address="io_space:0x3A3"/>
+    <symbol name="HDLC1_CHL" address="io_space:0x3A4"/>
+    <symbol name="HDLC1_TX_DATA" address="io_space:0x3A5"/>
+    <symbol name="HDLC1_TX_STATUS" address="io_space:0x3A6"/>
+    <symbol name="HDLC1_TX_CTRL" address="io_space:0x3A7"/>
+    <symbol name="HDLC1_RRTS" address="io_space:0x3A8"/>
+    <symbol name="HDLC1_WRTC" address="io_space:0x3A9"/>
+    <symbol name="HDLC1_RTTS" address="io_space:0x3AA"/>
+    <symbol name="HDLC1_WTTC" address="io_space:0x3AB"/>
+    <symbol name="HDLC1_DMA_ADDR_R" address="io_space:0x3AC"/>
+    <symbol name="HDLC1_DMA_ADDR_W" address="io_space:0x3AD"/>
+    <symbol name="HDLC1_DMA_CMD_R" address="io_space:0x3AE"/>
+    <symbol name="HDLC1_DMA_CMD_W" address="io_space:0x3AF"/>
+
+    <!-- HDLC/Megalink 2 (octal 01660-01677, level 12/13, ident 0151) -->
+    <symbol name="HDLC2_RX_DATA" address="io_space:0x3B0"/>
+    <symbol name="HDLC2_PCR" address="io_space:0x3B1"/>
+    <symbol name="HDLC2_RX_STATUS" address="io_space:0x3B2"/>
+    <symbol name="HDLC2_SAR" address="io_space:0x3B3"/>
+    <symbol name="HDLC2_CHL" address="io_space:0x3B4"/>
+    <symbol name="HDLC2_TX_DATA" address="io_space:0x3B5"/>
+    <symbol name="HDLC2_TX_STATUS" address="io_space:0x3B6"/>
+    <symbol name="HDLC2_TX_CTRL" address="io_space:0x3B7"/>
+    <symbol name="HDLC2_RRTS" address="io_space:0x3B8"/>
+    <symbol name="HDLC2_WRTC" address="io_space:0x3B9"/>
+    <symbol name="HDLC2_RTTS" address="io_space:0x3BA"/>
+    <symbol name="HDLC2_WTTC" address="io_space:0x3BB"/>
+    <symbol name="HDLC2_DMA_ADDR_R" address="io_space:0x3BC"/>
+    <symbol name="HDLC2_DMA_ADDR_W" address="io_space:0x3BD"/>
+    <symbol name="HDLC2_DMA_CMD_R" address="io_space:0x3BE"/>
+    <symbol name="HDLC2_DMA_CMD_W" address="io_space:0x3BF"/>
+
+    <!-- HDLC/Megalink 3 (octal 01700-01717, level 12/13, ident 0152) -->
+    <symbol name="HDLC3_RX_DATA" address="io_space:0x3C0"/>
+    <symbol name="HDLC3_PCR" address="io_space:0x3C1"/>
+    <symbol name="HDLC3_RX_STATUS" address="io_space:0x3C2"/>
+    <symbol name="HDLC3_SAR" address="io_space:0x3C3"/>
+    <symbol name="HDLC3_CHL" address="io_space:0x3C4"/>
+    <symbol name="HDLC3_TX_DATA" address="io_space:0x3C5"/>
+    <symbol name="HDLC3_TX_STATUS" address="io_space:0x3C6"/>
+    <symbol name="HDLC3_TX_CTRL" address="io_space:0x3C7"/>
+    <symbol name="HDLC3_RRTS" address="io_space:0x3C8"/>
+    <symbol name="HDLC3_WRTC" address="io_space:0x3C9"/>
+    <symbol name="HDLC3_RTTS" address="io_space:0x3CA"/>
+    <symbol name="HDLC3_WTTC" address="io_space:0x3CB"/>
+    <symbol name="HDLC3_DMA_ADDR_R" address="io_space:0x3CC"/>
+    <symbol name="HDLC3_DMA_ADDR_W" address="io_space:0x3CD"/>
+    <symbol name="HDLC3_DMA_CMD_R" address="io_space:0x3CE"/>
+    <symbol name="HDLC3_DMA_CMD_W" address="io_space:0x3CF"/>
+
+    <!-- HDLC/Megalink 4 (octal 01720-01737, level 12/13, ident 0153) -->
+    <symbol name="HDLC4_RX_DATA" address="io_space:0x3D0"/>
+    <symbol name="HDLC4_PCR" address="io_space:0x3D1"/>
+    <symbol name="HDLC4_RX_STATUS" address="io_space:0x3D2"/>
+    <symbol name="HDLC4_SAR" address="io_space:0x3D3"/>
+    <symbol name="HDLC4_CHL" address="io_space:0x3D4"/>
+    <symbol name="HDLC4_TX_DATA" address="io_space:0x3D5"/>
+    <symbol name="HDLC4_TX_STATUS" address="io_space:0x3D6"/>
+    <symbol name="HDLC4_TX_CTRL" address="io_space:0x3D7"/>
+    <symbol name="HDLC4_RRTS" address="io_space:0x3D8"/>
+    <symbol name="HDLC4_WRTC" address="io_space:0x3D9"/>
+    <symbol name="HDLC4_RTTS" address="io_space:0x3DA"/>
+    <symbol name="HDLC4_WTTC" address="io_space:0x3DB"/>
+    <symbol name="HDLC4_DMA_ADDR_R" address="io_space:0x3DC"/>
+    <symbol name="HDLC4_DMA_ADDR_W" address="io_space:0x3DD"/>
+    <symbol name="HDLC4_DMA_CMD_R" address="io_space:0x3DE"/>
+    <symbol name="HDLC4_DMA_CMD_W" address="io_space:0x3DF"/>
+
+    <!-- HDLC/Megalink 5 (octal 01740-01757, level 12/13, ident 0154) -->
+    <symbol name="HDLC5_RX_DATA" address="io_space:0x3E0"/>
+    <symbol name="HDLC5_PCR" address="io_space:0x3E1"/>
+    <symbol name="HDLC5_RX_STATUS" address="io_space:0x3E2"/>
+    <symbol name="HDLC5_SAR" address="io_space:0x3E3"/>
+    <symbol name="HDLC5_CHL" address="io_space:0x3E4"/>
+    <symbol name="HDLC5_TX_DATA" address="io_space:0x3E5"/>
+    <symbol name="HDLC5_TX_STATUS" address="io_space:0x3E6"/>
+    <symbol name="HDLC5_TX_CTRL" address="io_space:0x3E7"/>
+    <symbol name="HDLC5_RRTS" address="io_space:0x3E8"/>
+    <symbol name="HDLC5_WRTC" address="io_space:0x3E9"/>
+    <symbol name="HDLC5_RTTS" address="io_space:0x3EA"/>
+    <symbol name="HDLC5_WTTC" address="io_space:0x3EB"/>
+    <symbol name="HDLC5_DMA_ADDR_R" address="io_space:0x3EC"/>
+    <symbol name="HDLC5_DMA_ADDR_W" address="io_space:0x3ED"/>
+    <symbol name="HDLC5_DMA_CMD_R" address="io_space:0x3EE"/>
+    <symbol name="HDLC5_DMA_CMD_W" address="io_space:0x3EF"/>
+
+    <!-- HDLC/Megalink 6 (octal 01760-01777, level 12/13, ident 0155) -->
+    <symbol name="HDLC6_RX_DATA" address="io_space:0x3F0"/>
+    <symbol name="HDLC6_PCR" address="io_space:0x3F1"/>
+    <symbol name="HDLC6_RX_STATUS" address="io_space:0x3F2"/>
+    <symbol name="HDLC6_SAR" address="io_space:0x3F3"/>
+    <symbol name="HDLC6_CHL" address="io_space:0x3F4"/>
+    <symbol name="HDLC6_TX_DATA" address="io_space:0x3F5"/>
+    <symbol name="HDLC6_TX_STATUS" address="io_space:0x3F6"/>
+    <symbol name="HDLC6_TX_CTRL" address="io_space:0x3F7"/>
+    <symbol name="HDLC6_RRTS" address="io_space:0x3F8"/>
+    <symbol name="HDLC6_WRTC" address="io_space:0x3F9"/>
+    <symbol name="HDLC6_RTTS" address="io_space:0x3FA"/>
+    <symbol name="HDLC6_WTTC" address="io_space:0x3FB"/>
+    <symbol name="HDLC6_DMA_ADDR_R" address="io_space:0x3FC"/>
+    <symbol name="HDLC6_DMA_ADDR_W" address="io_space:0x3FD"/>
+    <symbol name="HDLC6_DMA_CMD_R" address="io_space:0x3FE"/>
+    <symbol name="HDLC6_DMA_CMD_W" address="io_space:0x3FF"/>
+
+    <!-- Octobus Interface 1 (octal 100400-100407, level 13, ident 040/041) -->
+    <symbol name="OCT1_IN_READ_DATA" address="io_space:0x8100"/>
+    <symbol name="OCT1_IN_WRITE_DATA" address="io_space:0x8101"/>
+    <symbol name="OCT1_IN_READ_STATUS" address="io_space:0x8102"/>
+    <symbol name="OCT1_IN_WRITE_CTRL" address="io_space:0x8103"/>
+    <symbol name="OCT1_OUT_READ_DATA" address="io_space:0x8104"/>
+    <symbol name="OCT1_OUT_WRITE_CMD" address="io_space:0x8105"/>
+    <symbol name="OCT1_OUT_READ_STATUS" address="io_space:0x8106"/>
+    <symbol name="OCT1_OUT_WRITE_CTRL" address="io_space:0x8107"/>
+
+    <!-- Octobus Interface 2 (octal 100410-100417, level 13, ident 042/043) -->
+    <symbol name="OCT2_IN_READ_DATA" address="io_space:0x8108"/>
+    <symbol name="OCT2_IN_WRITE_DATA" address="io_space:0x8109"/>
+    <symbol name="OCT2_IN_READ_STATUS" address="io_space:0x810A"/>
+    <symbol name="OCT2_IN_WRITE_CTRL" address="io_space:0x810B"/>
+    <symbol name="OCT2_OUT_READ_DATA" address="io_space:0x810C"/>
+    <symbol name="OCT2_OUT_WRITE_CMD" address="io_space:0x810D"/>
+    <symbol name="OCT2_OUT_READ_STATUS" address="io_space:0x810E"/>
+    <symbol name="OCT2_OUT_WRITE_CTRL" address="io_space:0x810F"/>
+
+    <!-- Octobus Interface 3 (octal 100420-100427, level 13, ident 044/045) -->
+    <symbol name="OCT3_IN_READ_DATA" address="io_space:0x8110"/>
+    <symbol name="OCT3_IN_WRITE_DATA" address="io_space:0x8111"/>
+    <symbol name="OCT3_IN_READ_STATUS" address="io_space:0x8112"/>
+    <symbol name="OCT3_IN_WRITE_CTRL" address="io_space:0x8113"/>
+    <symbol name="OCT3_OUT_READ_DATA" address="io_space:0x8114"/>
+    <symbol name="OCT3_OUT_WRITE_CMD" address="io_space:0x8115"/>
+    <symbol name="OCT3_OUT_READ_STATUS" address="io_space:0x8116"/>
+    <symbol name="OCT3_OUT_WRITE_CTRL" address="io_space:0x8117"/>
+
+    <!-- Octobus Interface 4 (octal 100430-100437, level 13, ident 046/047) -->
+    <symbol name="OCT4_IN_READ_DATA" address="io_space:0x8118"/>
+    <symbol name="OCT4_IN_WRITE_DATA" address="io_space:0x8119"/>
+    <symbol name="OCT4_IN_READ_STATUS" address="io_space:0x811A"/>
+    <symbol name="OCT4_IN_WRITE_CTRL" address="io_space:0x811B"/>
+    <symbol name="OCT4_OUT_READ_DATA" address="io_space:0x811C"/>
+    <symbol name="OCT4_OUT_WRITE_CMD" address="io_space:0x811D"/>
+    <symbol name="OCT4_OUT_READ_STATUS" address="io_space:0x811E"/>
+    <symbol name="OCT4_OUT_WRITE_CTRL" address="io_space:0x811F"/>
+
+    <!-- Ethernet II Controller 1 (octal 140360-140363, level 12, ident 0140034) -->
+    <symbol name="ETH1_DATA_LO" address="io_space:0xC0F0"/>
+    <symbol name="ETH1_DATA_HI" address="io_space:0xC0F1"/>
+    <symbol name="ETH1_ADDR" address="io_space:0xC0F2"/>
+    <symbol name="ETH1_CTRL" address="io_space:0xC0F3"/>
+
+    <!-- Ethernet II Controller 2 (octal 140364-140367, level 12, ident 0140035) -->
+    <symbol name="ETH2_DATA_LO" address="io_space:0xC0F4"/>
+    <symbol name="ETH2_DATA_HI" address="io_space:0xC0F5"/>
+    <symbol name="ETH2_ADDR" address="io_space:0xC0F6"/>
+    <symbol name="ETH2_CTRL" address="io_space:0xC0F7"/>
+
+    <!-- SCSI Disc Controller 1 (octal 144300-144377, level 11, ident 0140440) -->
+    <symbol name="SCSI1_RLMAR" address="io_space:0xC8C0"/>
+    <symbol name="SCSI1_WLMAR" address="io_space:0xC8C1"/>
+    <symbol name="SCSI1_REDAT" address="io_space:0xC8C2"/>
+    <symbol name="SCSI1_WRDAT" address="io_space:0xC8C3"/>
+    <symbol name="SCSI1_RSTAU" address="io_space:0xC8C4"/>
+    <symbol name="SCSI1_WCONT" address="io_space:0xC8C5"/>
+    <symbol name="SCSI1_RHMAR" address="io_space:0xC8C6"/>
+    <symbol name="SCSI1_WHMAR" address="io_space:0xC8C7"/>
+
+    <!-- SCSI Disc Controller 2 (octal 144400-144477, level 11, ident 0140441) -->
+    <symbol name="SCSI2_RLMAR" address="io_space:0xC900"/>
+    <symbol name="SCSI2_WLMAR" address="io_space:0xC901"/>
+    <symbol name="SCSI2_REDAT" address="io_space:0xC902"/>
+    <symbol name="SCSI2_WRDAT" address="io_space:0xC903"/>
+    <symbol name="SCSI2_RSTAU" address="io_space:0xC904"/>
+    <symbol name="SCSI2_WCONT" address="io_space:0xC905"/>
+    <symbol name="SCSI2_RHMAR" address="io_space:0xC906"/>
+    <symbol name="SCSI2_WHMAR" address="io_space:0xC907"/>
+
+  </default_symbols>
+
+  <!-- Create I/O space memory block so it appears in Ghidra -->
+  <default_memory_blocks>
+    <memory_block name="IO_DEVICES" start_address="io_space:0x0" length="0x800" initialized="true"/>
+    <!-- Extended IOX address ranges (24-bit IOXT instruction) -->
+    <memory_block name="IO_OCTOBUS" start_address="io_space:0x8100" length="0x40" initialized="true"/>
+    <memory_block name="IO_ETHERNET" start_address="io_space:0xC0F0" length="0x10" initialized="true"/>
+    <memory_block name="IO_SCSI" start_address="io_space:0xC8C0" length="0x80" initialized="true"/>
+  </default_memory_blocks>
+
+  <!-- Properties specific to ND-100 architecture -->
+  <properties>
+    <property key="addressSize" value="24"/>        <!-- 24-bit addressing -->
+    <property key="wordSize" value="16"/>           <!-- 16-bit word size -->
+    <property key="byteSize" value="8"/>            <!-- 8-bit byte size -->
+    <property key="endianness" value="big"/>        <!-- Big endian -->
+    <property key="programLevels" value="16"/>      <!-- 16 program levels -->
+    <property key="registersPerLevel" value="8"/>   <!-- 8 registers per level -->
+    <property key="interruptLevels" value="16"/>    <!-- 16 interrupt levels -->
+    <property key="internalInterruptLevel" value="14"/>  <!-- Internal interrupts on level 14 -->
+    <property key="maxMemorySize" value="16777216"/> <!-- 16MB max memory (24-bit) -->
+  </properties>
+</processor_spec>

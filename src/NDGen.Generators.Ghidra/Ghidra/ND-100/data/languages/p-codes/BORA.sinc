@@ -1,0 +1,9 @@
+# BORA: Logical OR to K
+:BORA is op9=0x1FF {
+    # BORA: Logical OR operation with single bit accumulator (K)
+    # K = K OR some_bit (typically from memory or register)
+    # K is bit 8 of the STS register (multi-shift flag)
+    local current_k:1 = STS[8,8];                # Get current K flag value
+    local some_bit:1 = 1;                        # TODO: Source bit needs to be determined from operand
+    STS[8,8] = current_k || some_bit;            # K = K OR source_bit
+}

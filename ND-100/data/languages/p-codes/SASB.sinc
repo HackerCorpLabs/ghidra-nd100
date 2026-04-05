@@ -1,0 +1,5 @@
+    # 140701 octal = 0xC1C1, 10-bit mask
+    # SASB: Bank operation with B-relative addressing
+    local ea:2 = B + disp3;              # B-relative addressing with 3-bit displacement
+    *:2 ea = A;                               # Store A register to bank
+    # SASB: Bank type determined by instruction - Core Map Bank (CMB) or Segment Table Bank (STB)

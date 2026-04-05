@@ -1,0 +1,4 @@
+    # 170000 octal = 0xF000, 8-bit mask
+    # SAB: Set argument to B — B = sign_extend(disp)
+    # C source: setreg(_B, signExtend(operand & 0xFF))
+    B = disp;

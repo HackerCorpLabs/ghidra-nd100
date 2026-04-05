@@ -1,0 +1,5 @@
+# BORC: Logical OR with bit complement
+:BORC is op9=0x1FE {
+    # TODO: Implement P-code for BORC - Logical OR with bit complement
+    # This instruction performs logical OR with complement of the bit
+}

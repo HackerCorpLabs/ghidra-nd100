@@ -1,0 +1,22 @@
+# PON: Memory management ON - 16-bit mask instruction
+# YAML: mask "1111_1111_1111_1111", opcode "150410" (octal)
+# Requires: Proper system state setup
+#
+# Enables the memory management system by setting the PONI flag in status register.
+# On ND-100 this is bit 14 of the STS register.
+# Next instruction will use pageindex table specified by PCR.
+#
+# Prerequisites:
+# - Interrupt system enabled (IONI = 1)
+# - Internal hardware interrupts enabled
+# - Page tables and PCR registers initialized
+#
+# P-code implementation:
+# STS[14,14] = 1;  # Set PONI (Memory management ON) flag
+#
+# SLEIGH Limitation: Cannot implement due to 16-bit mask
+# Manual implementation would be:
+# :PON {
+#     STS[14,14] = 1;  # Enable memory management
+#     # Enter protected mode with hardware memory protection
+# }

@@ -1,0 +1,11 @@
+    # SUB: A = A - mem[EA]
+    # C source: do_add(gA, ~eff_word, 1) — implements as ones' complement + carry-in
+    # Carry: C=1 means NO borrow (A >= mem unsigned), matching do_add convention
+    local memval:2 = addr;                    # Load memory value via addr sub-table
+    local old_a:2 = A;                        # Save original A for flag computation
+    local comp:2 = ~memval;                   # Ones' complement
+    local tmp:4 = zext(old_a) + zext(comp) + 1; # Two's complement subtract via add
+    A = tmp:2;                                # Store result
+    STS[6,6] = (tmp >> 16) != 0;              # C = carry out (1 = no borrow)
+    STS[5,5] = sborrow(old_a, memval);        # O = signed overflow (dynamic)
+    STS[4,4] = STS[4,4] | sborrow(old_a, memval); # Q = sticky overflow

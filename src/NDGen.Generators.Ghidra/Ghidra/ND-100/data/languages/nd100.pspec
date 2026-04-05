@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<processor_spec>
+  <programcounter register="P"/>
+  
+  <!-- Register data for ND-100 processor registers -->
+  <register_data>      
+    <!-- Current Active Registers (context-sensitive aliases) -->
+    <register name="A"/>       <!-- Current Accumulator -->
+    <register name="D"/>       <!-- Current Extension register -->
+    <register name="T"/>       <!-- Current Temporary register -->
+    <register name="L"/>       <!-- Current Link register -->
+    <register name="X"/>       <!-- Current Index register -->
+    <register name="B"/>       <!-- Current Base register -->
+    <register name="P"/>       <!-- Current Program counter -->
+    
+    <!-- Status Register Components -->
+    <register name="STS"/>     <!-- Status register -->
+    
+    <!-- Status Register Individual Flags -->
+    <register name="C"/>       <!-- Carry flag -->
+    <register name="Q"/>       <!-- Dynamic overflow flag -->
+    <register name="O"/>       <!-- Static overflow flag -->
+    <register name="Z"/>       <!-- Error flag -->
+    <register name="K"/>       <!-- One-bit accumulator -->
+    <register name="TG"/>      <!-- Rounding flag for FP -->
+    <register name="M"/>       <!-- Multi-shift link flag -->
+    <register name="PTM"/>     <!-- Page table modus flag -->
+    
+    <!-- Program Level Control -->
+    <register name="PIL"/>     <!-- Program Interrupt Level (0-15) -->
+    <register name="PVL"/>     <!-- Previous interrupt Level -->
+    
+    <!-- System Status Indicators -->
+    <register name="IONI"/>    <!-- Interrupt system ON -->
+    <register name="PONI"/>    <!-- Memory management ON -->
+    <register name="SEXI"/>    <!-- Extended addressing mode -->
+    <register name="N100"/>    <!-- ND-100 machine indicator -->
+    
+    <!-- Operator Panel Registers -->
+    <register name="PANS"/>    <!-- Panel Status register (read-only) -->
+    <register name="PANC"/>    <!-- Panel Control register (write-only) -->
+    <register name="LMP"/>     <!-- Lamp register (write-only) -->
+    <register name="OPR"/>     <!-- Operator Panel Switch register (read-only) -->
+    <register name="ALD"/>     <!-- Automatic Load Descriptor -->
+    
+    <!-- External Interrupt System -->
+    <register name="PID"/>     <!-- Priority Interrupt Detect -->
+    <register name="PIE"/>     <!-- Priority Interrupt Enable -->
+    <register name="PK"/>      <!-- Priority interrupt code (calculated) -->
+    
+    <!-- Internal Interrupt System -->
+    <register name="IID"/>     <!-- Internal Interrupt Detect -->
+    <register name="IIE"/>     <!-- Internal Interrupt Enable -->
+    <register name="IIC"/>     <!-- Internal Interrupt Code (0-12) -->
+   
+    <!-- Additional MMS Registers -->
+    <register name="PGS"/>     <!-- Paging Status register -->
+    <register name="PGC"/>     <!-- Page Control register -->
+    <register name="PEA"/>     <!-- Page Error Address -->
+    <register name="PES"/>     <!-- Page Error Status -->
+    
+    <!-- Cache Control Registers (ND-110 and later) -->
+    <register name="CSR"/>     <!-- Cache Status Register -->
+    <register name="LCIL"/>    <!-- Lower Cache Inhibit Limit -->
+    <register name="UCIL"/>    <!-- Upper Cache Inhibit Limit -->
+    <register name="CCL"/>     <!-- Cache Clear register -->
+    <register name="CILP"/>    <!-- Cache Inhibit Page register -->
+    
+    <!-- Error Correction Code Register (ND-110 and later) -->
+    <register name="ECCR"/>    <!-- ECC Register -->
+    
+    <!-- Control Store Registers (ND-110 and later) -->
+    <register name="CS"/>      <!-- Control Store register -->
+    
+    <!-- Effective Address (computed during instruction execution) -->
+    <register name="EA"/>      <!-- Effective Address -->
+    
+    <!-- CPU State Register -->
+    <register name="STATE"/>   <!-- CPU Run State (RUN/STOP/HALT/OPCOM) -->
+  </register_data>
+  
+  <!-- Default symbol definitions -->
+  <default_symbols>
+    <!-- Reset and interrupt vectors -->
+    <symbol name="Reset" address="0x0000"/>
+    <symbol name="PowerFail" address="0x0002"/>
+    <symbol name="MemoryParity" address="0x0004"/>
+    <symbol name="MemoryOutOfRange" address="0x0006"/>
+    <symbol name="IOXError" address="0x0008"/>
+    <symbol name="PrivilegedInstruction" address="0x000A"/>
+    <symbol name="ErrorIndicator" address="0x000C"/>
+    <symbol name="IllegalInstruction" address="0x000E"/>
+    <symbol name="PageFault" address="0x0010"/>
+    <symbol name="ProtectViolation" address="0x0012"/>
+    <symbol name="MonitorCall" address="0x0014"/>
+    
+    <!-- Standard SINTRAN III addresses -->
+    <symbol name="SINTRAN_RT11" address="0x0020"/>
+    <symbol name="SINTRAN_MON" address="0x0100"/>
+    <symbol name="SINTRAN_EXEC" address="0x0200"/>
+    
+    <!-- Common hardware I/O addresses -->
+    <symbol name="CONSOLE_INPUT" address="0x0110"/>
+    <symbol name="CONSOLE_OUTPUT" address="0x0111"/>
+    <symbol name="FLOPPY_CONTROLLER" address="0x0112"/>
+    <symbol name="WINCHESTER_CONTROLLER" address="0x0113"/>
+    <symbol name="TAPE_CONTROLLER" address="0x0114"/>
+    <symbol name="ETHERNET_CONTROLLER" address="0x0115"/>
+    
+    <!-- Memory management addresses -->
+    <symbol name="PAGE_TABLE_BASE" address="0x7400"/>
+    <symbol name="ALT_PAGE_TABLE_BASE" address="0x7500"/>
+    
+    <!-- Common ROM/Monitor addresses -->
+    <symbol name="MONITOR_START" address="0x7000"/>
+    <symbol name="BOOTSTRAP_START" address="0x7700"/>
+  </default_symbols>
+  
+  <!-- Properties specific to ND-100 architecture -->
+  <properties>
+    <property key="addressSize" value="24"/>        <!-- 24-bit addressing -->
+    <property key="wordSize" value="16"/>           <!-- 16-bit word size -->
+    <property key="byteSize" value="8"/>            <!-- 8-bit byte size -->
+    <property key="endianness" value="big"/>        <!-- Big endian -->
+    <property key="programLevels" value="16"/>      <!-- 16 program levels -->
+    <property key="registersPerLevel" value="8"/>   <!-- 8 registers per level -->
+    <property key="interruptLevels" value="16"/>    <!-- 16 interrupt levels -->
+    <property key="internalInterruptLevel" value="14"/>  <!-- Internal interrupts on level 14 -->
+    <property key="maxMemorySize" value="16777216"/> <!-- 16MB max memory (24-bit) -->
+  </properties>
+</processor_spec>

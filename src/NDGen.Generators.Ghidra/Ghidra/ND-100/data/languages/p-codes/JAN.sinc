@@ -1,0 +1,26 @@
+# JAN: Jump if A Negative - 8-bit mask instruction
+# YAML: mask "1111_1111_0000_0000", opcode "0130400" (octal)
+# Conditional jump based on A register sign bit
+#
+# C# EMULATOR ANALYSIS COMPLETE
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.SequencingInstructions.cs:93
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Condition evaluation:
+#    - condition = ((regs.currentRegisters.A & (1 << 15)) != 0)
+#    - Tests bit 15 of A register (sign bit for 2's complement)
+#
+# 2. Jump conditions:
+#    - JUMP: A[15] == 1 (A register negative in 2's complement)
+#    - NO JUMP: A[15] == 0 (A register positive or zero)
+#
+# 3. Address calculation:
+#    - Target = (PC - 1) + displacement
+#    - Range: -128 to +127 words (signed 8-bit displacement)
+#
+:JAN disp is op8=0xB1 & disp {  # 0130400 octal = 0xB100, mask 1111_1111_0000_0000 (8 bits), pattern 0xB1
+    # FIXED IMPLEMENTATION: Use same pattern as working JMP instruction
+    local addr:2 = inst_start + 1 + disp;  # Calculate PC-relative target (same as JMP)
+    if ((A & 0x8000) != 0) goto [addr];  # Jump if A negative (sign bit set)
+}
+# SLEIGH Pattern Works: x86 and 68000 use identical "if (condition) goto constructor" pattern

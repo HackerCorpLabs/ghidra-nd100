@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CLSCompliant>true</CLSCompliant>
+    <RootNamespace>NDGen.Generators</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\nd100-definitions\src\ND100.Definitions\ND100.Definitions.csproj" />
+  </ItemGroup>
+
+</Project>

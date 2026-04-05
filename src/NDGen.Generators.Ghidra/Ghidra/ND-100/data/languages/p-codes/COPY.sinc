@@ -1,0 +1,6 @@
+:COPY disp is op8=0xCC & disp {  # 0146100 octal = 0xCC40, mask 1111_1111_0000_0000 (8 bits), pattern 0xCC
+    # COPY: Copy source register to destination register
+    # Source register: bits 5-3, Destination register: bits 2-0
+    # TODO: Full implementation requires register operand decoding via sub-tables
+    # Placeholder: treat as A = A (identity) for disassembly
+}

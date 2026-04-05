@@ -1,0 +1,5 @@
+# LWCS: Writable Control Store Instruction
+:LWCS is op16=0xC14D {
+    # TODO: Implement P-code for LWCS - Writable Control Store Instruction
+    # This instruction accesses the writable control store
+}

@@ -1,0 +1,5 @@
+# REPT: Enter reentrant segment in page tables
+:REPT is op16=0xC147 {
+    # TODO: Implement P-code for REPT - Enter reentrant segment in page tables
+    # This instruction enters a reentrant segment in page tables (see Appendix B for software description)
+}

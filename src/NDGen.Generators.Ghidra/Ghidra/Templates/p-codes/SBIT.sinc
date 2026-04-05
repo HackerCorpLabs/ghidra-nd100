@@ -1,0 +1,3 @@
+    # SBIT: Store single bit accumulator K to logical memory bit
+    # YAML: X = bit array base, A = bit index within array
+    nd100_sbit(A, X);

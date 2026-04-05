@@ -1,0 +1,5 @@
+# WGLOB: Initialize global pointers
+:WGLOB is op16=0xC157 {
+    # TODO: Implement P-code for WGLOB - Initialize global pointers
+    # This instruction initializes global pointer information
+}

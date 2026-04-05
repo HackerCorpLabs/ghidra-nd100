@@ -1,0 +1,9 @@
+    # ADD: A = A + mem[EA]
+    # Ref: Instructions.cs — flags computed from original A value, not result
+    local memval:2 = addr;                    # Load memory value via addr sub-table
+    local old_a:2 = A;                        # Save original A for flag computation
+    local tmp:4 = zext(old_a) + zext(memval); # 32-bit add
+    A = tmp:2;                                # Store result
+    STS[6,6] = (tmp >> 16) != 0;              # Carry flag (C) - bit 6
+    STS[5,5] = scarry(old_a, memval);         # Static overflow flag (O) - bit 5
+    STS[4,4] = STS[4,4] | scarry(old_a, memval); # Dynamic overflow flag (Q) - bit 4

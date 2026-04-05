@@ -1,0 +1,97 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Update GHIDRA_VERSION when upgrading Ghidra.
+# The download URL is resolved automatically from the GitHub Releases API.
+env:
+  GHIDRA_VERSION: '12.0.4'
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Resolve Ghidra download URL
+        id: ghidra-url
+        shell: pwsh
+        run: |
+          $release = Invoke-RestMethod "https://api.github.com/repos/NationalSecurityAgency/ghidra/releases/tags/Ghidra_${{ env.GHIDRA_VERSION }}_build"
+          $asset = $release.assets | Where-Object { $_.name -like "ghidra_*_PUBLIC_*.zip" } | Select-Object -First 1
+          if (-not $asset) { throw "No Ghidra zip found for version ${{ env.GHIDRA_VERSION }}" }
+          Write-Host "Ghidra asset: $($asset.name)"
+          echo "url=$($asset.browser_download_url)" >> $env:GITHUB_OUTPUT
+          echo "name=$($asset.name)" >> $env:GITHUB_OUTPUT
+
+      - name: Cache Ghidra
+        id: cache-ghidra
+        uses: actions/cache@v4
+        with:
+          path: C:\ghidra
+          key: ghidra-${{ env.GHIDRA_VERSION }}
+
+      - name: Download and extract Ghidra
+        if: steps.cache-ghidra.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $url = "${{ steps.ghidra-url.outputs.url }}"
+          $zip = "${{ steps.ghidra-url.outputs.name }}"
+          Write-Host "Downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile $zip
+          Expand-Archive -Path $zip -DestinationPath C:\ghidra
+          Remove-Item $zip
+
+      - name: Extract version
+        id: version
+        shell: pwsh
+        run: |
+          $v = "${{ github.ref_name }}" -replace '^v', ''
+          echo "value=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Build extension
+        shell: cmd
+        env:
+          GHIDRA_INSTALL_DIR: C:\ghidra\ghidra_${{ env.GHIDRA_VERSION }}_PUBLIC
+          MODULE_VERSION: ${{ steps.version.outputs.value }}
+        run: build.bat
+
+      - name: Rename zip
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.value }}"
+          $src = Get-ChildItem "ND-100/dist/ghidra_*_ND-100.zip" | Select-Object -First 1
+          $dst = "ND-100/dist/ghidra-nd100-${version}.zip"
+          Rename-Item $src.FullName $dst
+          Write-Host "Released as: $dst"
+
+      - name: Create release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = "${{ steps.version.outputs.value }}"
+          gh release create "${{ github.ref_name }}" `
+            "ND-100/dist/ghidra-nd100-${version}.zip" `
+            --title "${{ github.ref_name }}" `
+            --generate-notes

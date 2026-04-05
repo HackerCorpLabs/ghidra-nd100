@@ -1,0 +1,4 @@
+:JMP disp is op8=0xA8 & disp {  # 124000 octal = 0xA800, top 8 bits = 0xA8
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    goto [addr];                            # Unconditional branch
+}

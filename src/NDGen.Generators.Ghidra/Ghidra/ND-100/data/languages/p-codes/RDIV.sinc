@@ -1,0 +1,58 @@
+# RDIV: Divide double accumulator with source - 10-bit mask instruction
+# YAML: mask "1111_1111_1100_0000", opcode "141600" (octal)
+# Divide 32-bit AD by source register
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.RegisterOperations.cs:598
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Form 32-bit dividend from A and D:
+#    - dividend = regs.currentRegisters.A << 16 | regs.currentRegisters.D
+#
+# 2. Get signed divisor from source register:
+#    - divisor = (short)GetRopRegister(regs.fetched.roSrc)
+#
+# 3. Division by zero handling:
+#    - if (divisor == 0):
+#      * STS.Z = true (error indicator)
+#      * CheckForInterruptSTS_Z() (trigger interrupt 14)
+#      * return (exit without computing)
+#
+# 4. Division operation:
+#    - result = dividend / divisor
+#    - Math.DivRem(dividend, divisor, out remainder) for both quotient and remainder
+#
+# 5. Overflow detection:
+#    - if (Math.Abs(result) >= 32768):
+#      * STS.Z = true (overflow error)
+#      * CheckForInterruptSTS_Z() (trigger interrupt 14)
+#      * return (exit without storing result)
+#
+# 6. Carry flag computation:
+#    - STS.C = ((result & 0xFFFF0000) != 0) (check upper 16 bits)
+#
+# 7. Result storage:
+#    - A = (ushort)quotient   # 16-bit quotient
+#    - D = (ushort)remainder  # 16-bit remainder
+#
+# 8. Sign of remainder matches dividend sign (VERIFIED)
+#
+# Relationship: dividend = quotient * divisor + remainder
+#
+# P-code implementation (documented - cannot compile due to 10-bit mask):
+# local dividend:4 = (zext(A) << 16) | zext(D);
+# local divisor:4 = sext(GetRopRegister(src));
+# if (divisor == 0) goto <div_by_zero>;
+# local quotient:4 = dividend s/ divisor;
+# local remainder:4 = dividend s% divisor;
+# if (quotient s< -32768 || quotient s> 32767) goto <overflow>;
+# A = quotient:2;
+# D = remainder:2;
+# STS_C = (quotient & 0xFFFF0000) != 0;
+# goto <done>;
+# <div_by_zero>: STS_Z = 1; call CheckInterruptZ; return;
+# <overflow>: STS_Z = 1; call CheckInterruptZ; return;
+# <done>:
+#
+# SLEIGH Limitation: Cannot implement due to 10-bit mask
+# Manual implementation would require sub-tables for register combinations

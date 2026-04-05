@@ -1,0 +1,3 @@
+    # VERSN: Read ND-110 version info — modifies A, T, D
+    # Called as void since it writes to multiple registers
+    nd100_versn(A, T, D);

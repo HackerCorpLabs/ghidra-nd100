@@ -1,0 +1,8 @@
+:IOT disp is op5=0x1C & disp {  # 160000 octal = 0xE000, mask 1111_1000_0000_0000 (5 bits), pattern 0x1C
+    # IOT: Input/Output Test - test device status
+    local device_addr:2 = disp;              # Device register address
+    local status:2 = *[io_space]:2 device_addr;  # Read device status
+    # Test device status and set flags accordingly
+    STS[3,3] = (status == 0);               # Zero flag if device not ready
+    # Note: Full IOT behavior is device-dependent and system-specific
+}

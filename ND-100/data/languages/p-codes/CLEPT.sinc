@@ -1,0 +1,3 @@
+    # CLEPT: Clear page tables — privileged
+    # Uses A, B, T, X (B holds page table address)
+    nd100_page_op(A, B, T, X);

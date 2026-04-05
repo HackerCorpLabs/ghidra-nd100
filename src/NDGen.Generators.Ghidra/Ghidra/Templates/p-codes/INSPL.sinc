@@ -1,0 +1,2 @@
+    # INSPL: Insert page in page list — privileged
+    nd100_page_op(A, D, T, X);

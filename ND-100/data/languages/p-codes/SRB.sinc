@@ -1,0 +1,2 @@
+    # SRB: Store register bank — save all registers for a priority level to memory at X
+    nd100_srb(rop_src, rop_dst, X);

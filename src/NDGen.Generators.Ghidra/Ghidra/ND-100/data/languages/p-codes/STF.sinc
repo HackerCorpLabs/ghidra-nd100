@@ -1,0 +1,5 @@
+:STF disp is op5=0x06 & disp {  # 030000 octal = 0x3000, mask 1111_1000_0000_0000 (5 bits), pattern 0x06
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    # STF: Store D to memory location - (EA) = D
+    *:2 addr = D;
+}

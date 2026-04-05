@@ -1,0 +1,6 @@
+    # JAF: Jump if A Filled (A != 0)
+    # Ref: Instructions.SequencingInstructions.cs:118 — CJP(regs.currentRegisters.A != 0)
+    # No flags affected
+    if (A == 0) goto <no_jump>;               # Skip if A is zero (empty)
+    goto rel_target;                          # Jump if A filled (non-zero)
+<no_jump>

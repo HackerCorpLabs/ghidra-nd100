@@ -1,0 +1,3 @@
+    # TRA: Transfer system register to A
+    local regsel:1 = reg4;
+    A = nd100_tra(regsel);

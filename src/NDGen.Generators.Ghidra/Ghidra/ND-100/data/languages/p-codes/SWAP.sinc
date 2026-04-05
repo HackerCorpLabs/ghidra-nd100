@@ -1,0 +1,30 @@
+# SWAP: Register swap - 10-bit mask instruction
+# YAML: mask "1111_1111_1100_0000", opcode "144000" (octal)
+# Register exchange with optional sub-instructions
+#
+# Basic operation: dr ← sr
+# With sub-instructions:
+# - CLD: Zero destination register
+# - CM1: Use 1's complement of source
+#
+# Instruction combinations:
+# SWAP <sr> <dr>           dr ← sr
+# SWAP CLD <sr> <dr>       dr ← sr; sr ← 0
+# SWAP CM1 <sr> <dr>       dr ← sr; sr ← dr
+# SWAP CM1 CLD <sr> <dr>   dr ← sr; sr ← 0
+#
+# P-code implementation:
+# if (CM1) {
+#     local temp:2 = dr;
+#     dr = ~sr;
+#     if (!CLD) sr = temp;
+# } else {
+#     local temp:2 = dr;
+#     dr = sr;
+#     if (CLD) sr = 0;
+#     else sr = temp;
+# }
+# # Update flags based on result
+#
+# SLEIGH Limitation: Cannot implement due to 10-bit mask
+# Manual implementation would require sub-tables for sub-instruction combinations

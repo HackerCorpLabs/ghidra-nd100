@@ -1,0 +1,2 @@
+    # CLNREENT: Clear non-reentrant pages — privileged
+    nd100_page_op(A, D, T, X);

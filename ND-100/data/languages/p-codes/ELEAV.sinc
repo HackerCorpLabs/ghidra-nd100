@@ -1,0 +1,14 @@
+    # ELEAV: Error leave stack — decrement LINK, store A as ERRCODE, then LEAVE
+    # C source: ndfunc_eleav() — LINK--, ERRCODE=A, PC=[B-128], B=[B-127]
+    local link_addr:2 = B - 128;
+    local prevb_addr:2 = B - 127;
+    local errcode_addr:2 = B - 123;
+    # Decrement LINK (return goes to error address instead of normal)
+    local link:2 = *:2 link_addr;
+    link = link - 1;
+    *:2 link_addr = link;
+    # Store error code
+    *:2 errcode_addr = A;
+    # LEAVE: restore frame and return
+    B = *:2 prevb_addr;
+    return [link];

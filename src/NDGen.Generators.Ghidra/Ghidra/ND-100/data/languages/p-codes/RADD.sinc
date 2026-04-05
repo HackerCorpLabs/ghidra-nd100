@@ -1,0 +1,6 @@
+:RADD disp is op8=0x33 & disp {  # 0146000 octal = 0xCC00, mask 1111_1100_0000_0000 (6 bits), pattern 0x33
+    # RADD: Register add - add source register to destination register
+    # Source register: bits 5-3, Destination register: bits 2-0
+    # TODO: Full implementation requires register operand decoding via sub-tables
+    # Placeholder for disassembly
+}

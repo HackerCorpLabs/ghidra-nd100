@@ -1,0 +1,17 @@
+# POF: Memory management OFF - 16-bit mask instruction
+# YAML: mask "1111_1111_1111_1111", opcode "150404" (octal)
+# Requires: Privileged mode operation
+#
+# Disables the memory management system by clearing the PONI flag in status register.
+# On ND-100 this is bit 14 of the STS register.
+# Next instruction will be taken from physical address.
+#
+# P-code implementation:
+# STS[14,14] = 0;  # Clear PONI (Memory management ON) flag
+#
+# SLEIGH Limitation: Cannot implement due to 16-bit mask
+# Manual implementation would be:
+# :POF {
+#     STS[14,14] = 0;  # Disable memory management
+#     # Enter unrestricted mode - all instructions legal, all memory accessible
+# }

@@ -1,0 +1,2 @@
+    # POF: Disable paging (memory management)
+    PONI = 0;

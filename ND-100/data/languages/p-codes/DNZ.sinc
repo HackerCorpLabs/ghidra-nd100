@@ -1,0 +1,7 @@
+    # DNZ: Denormalize — convert floating point T:A:D to integer in A
+    # Ref: Instructions.FloatingPointConversion.cs:202
+    # NOT "decrement D and jump" — that was completely wrong
+    local scale:2 = disp;                     # Scaling factor (sign-extended by assignment)
+    A = nd100_denormalize(T, A, D, scale);    # Convert float T:A:D to integer in A
+    T = 0;                                    # T cleared after denormalize
+    D = 0;                                    # D cleared after denormalize

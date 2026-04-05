@@ -1,0 +1,8 @@
+    # 034000 octal = 0x3800, 5-bit mask (ea_addr)
+    # LDF: Load floating accumulator — T from (EA), A from (EA+1), D from (EA+2)
+    local ea:2 = ea_addr;
+    T = *:2 ea;
+    local ea1:2 = ea + 1;
+    A = *:2 ea1;
+    local ea2:2 = ea + 2;
+    D = *:2 ea2;

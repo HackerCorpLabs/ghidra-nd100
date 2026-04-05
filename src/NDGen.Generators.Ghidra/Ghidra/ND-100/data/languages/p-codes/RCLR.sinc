@@ -1,0 +1,16 @@
+# RCLR: Register clear (compound mnemonic for COPY 0)
+# 13-bit mask instruction, last 3 bits specify destination register
+:RCLR reg3 is op13=0x1C88 & reg3 {
+    # RCLR: Register clear - compound mnemonic for "COPY 0"
+    # This is actually an RADD operation with immediate value 0
+    # Register destination specified in bits 2-0
+
+    # TODO: Need proper register decoding based on reg3 value
+    # For now, just clear A register as example
+    A = 0;
+
+    # Set flags for zero result (like RADD with 0)
+    STS[6,6] = 0;                                # Carry flag (C) - bit 6 - no carry when loading 0
+    STS[5,5] = 0;                                # Static overflow flag (O) - bit 5 - no overflow
+    STS[4,4] = 0;                                # Dynamic overflow flag (Q) - bit 4 - no overflow
+}

@@ -1,0 +1,7 @@
+    # LEAVE: Leave stack frame
+    # C source: ndfunc_leave() — PC = [B-128](LINK), B = [B-127](PREVB)
+    local link:2 = B - 128;
+    local prevb:2 = B - 127;
+    local ret_addr:2 = *:2 link;
+    B = *:2 prevb;
+    return [ret_addr];

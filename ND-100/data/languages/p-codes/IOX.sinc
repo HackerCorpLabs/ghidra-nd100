@@ -1,0 +1,11 @@
+    # 0164000 octal = 0xE800, 5-bit mask (I/O)
+    # io_ref sub-table exports *[io_space]:2 io_addr (value at io_space address)
+    # Direction determined by bit 0: even=input, odd=output
+    # Using io_ref for both read and write — Ghidra creates io_space reference
+    local dir:2 = io_dir;
+    if (dir != 0) goto <output>;
+    A = io_ref;
+    goto <done>;
+<output>
+    io_ref = A;
+<done>

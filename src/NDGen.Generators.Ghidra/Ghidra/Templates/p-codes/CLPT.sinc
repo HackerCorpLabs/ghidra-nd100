@@ -1,0 +1,2 @@
+    # CLPT: Clear segment from page tables — privileged (ND-110/CX)
+    nd100_page_op(A, D, T, X);

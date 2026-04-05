@@ -1,0 +1,3 @@
+    # SETPT: Set page table entries — privileged
+    # Uses A, B, D, X (B holds page table address)
+    nd100_page_op(A, B, D, X);

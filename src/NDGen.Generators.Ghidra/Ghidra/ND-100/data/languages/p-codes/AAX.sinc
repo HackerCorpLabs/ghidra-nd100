@@ -1,0 +1,5 @@
+:AAX disp is op8=0xF7 & disp {  # 173400 octal = 0xF700, mask 1111_1111_0000_0000 (8 bits), pattern 0xF7
+    # AAX: Add argument to X - X = X + disp (sign-extended)
+    local sext_disp:2 = sext(disp:1);
+    X = X + sext_disp;
+}

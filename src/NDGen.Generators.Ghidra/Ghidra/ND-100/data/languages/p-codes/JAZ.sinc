@@ -1,0 +1,38 @@
+# JAZ: Jump if A Zero - 8-bit mask instruction
+# YAML: mask "1111_1111_0000_0000", opcode "0131000" (octal)
+# Conditional jump based on A register zero test
+#
+# C# EMULATOR ANALYSIS COMPLETE
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.SequencingInstructions.cs:105
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Condition evaluation:
+#    - condition = (regs.currentRegisters.A == 0)
+#
+# 2. CRITICAL: Carry flag side effect:
+#    - cpu.regs.currentRegisters.STS.C = (regs.currentRegisters.A == 0)
+#    - JAZ is the ONLY jump instruction that sets a flag as a side effect
+#
+# 3. Conditional jump logic (CJP helper):
+#    - if (!condition) return;  # No jump if A != 0
+#    - regs.PC = doAdd((ushort)(regs.PC - 1), (ushort)regs.fetched.mriDisplacement)
+#
+# 4. Address calculation:
+#    - Target = (PC - 1) + displacement  # PC already incremented before call
+#    - Range: -128 to +127 words (signed 8-bit displacement)
+#    - Uses doAdd() for proper overflow handling
+#
+# 5. Jump conditions:
+#    - JUMP: A == 0 (A register contains zero)
+#    - NO JUMP: A != 0 (continue to next instruction)
+#
+# Conditional branching for zero-test with carry flag side effect.
+# Critical for loops and conditional logic in ND-100 programs.
+#
+:JAZ disp is op8=0xB2 & disp {  # 0131000 octal = 0xB200, mask 1111_1111_0000_0000 (8 bits), pattern 0xB2
+    # SLEIGH COMPATIBLE: Use local variable approach like JMP
+    STS[6,6] = (A == 0);  # CRITICAL: Set carry flag as side effect
+    local addr:2 = inst_start + 1 + disp;  # Calculate target address (same as JMP)
+    if (A == 0) goto [addr];  # Jump if A equals zero
+}
+# SLEIGH Pattern Works: x86 and 68000 use identical "if (condition) goto constructor" pattern

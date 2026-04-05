@@ -1,0 +1,5 @@
+# CNREK: Clear non reentrant pages (SINTRAN K only)
+:CNREK is op16=0xC144 {
+    # TODO: Implement P-code for CNREK - Clear non reentrant pages (SINTRAN K only)
+    # This instruction clears non-reentrant pages in SINTRAN K operating system
+}

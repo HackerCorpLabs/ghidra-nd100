@@ -1,0 +1,5 @@
+# BSTC: Store complement and set K to 1
+:BSTC is op9=0x1F8 {
+    # TODO: Implement P-code for BSTC - Store complement and set K to 1
+    # This instruction stores complement and sets the single bit accumulator K to 1
+}

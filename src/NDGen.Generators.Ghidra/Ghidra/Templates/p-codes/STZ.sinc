@@ -1,0 +1,2 @@
+    # 000000 octal = 0x0000, 5-bit mask (addr)
+    addr = 0;                                # Store zero to effective address (addr sub-table)

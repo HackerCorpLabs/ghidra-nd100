@@ -1,0 +1,70 @@
+# ND-100 Shift Instruction Sub-Tables
+#
+# Shift encoding (bits 10-0 within shift instruction word):
+#   Bits 10-9: shift type (00=Arithmetic, 01=ROT, 10=ZIN, 11=LIN)
+#   Bits 8-7:  register (00=T, 01=D, 10=A, 11=A:D)
+#   Bit 5:     direction sign (0=left, 1=right)
+#   Bits 4-0:  count (for left: direct, for right: actual_count = 32 - bits4_0)
+#
+# Display format: <register> [<type>] [SHR] <count>
+#   SHA ROT SHR 0x8  = Rotate A register right 8 positions
+#   SHD ZIN 0x3      = Zero-input shift D register left 3 positions
+#   SHA 0x5           = Arithmetic shift A register left 5 positions
+#
+# Export format: 2-byte value encoding type in bits 8-7, direction in bit 5, count in bits 4-0
+#   Bits 8-7: shift type (0=Arith, 1=ROT, 2=ZIN, 3=LIN)
+#   Bit 5: direction (0=left, 1=right)
+#   Bits 4-0: count (raw, for right shift: actual = 32 - count)
+
+# ======================================================================
+# shift_operand sub-table: decodes type + direction + count for display
+# Exports 2-byte value with type encoded in bits 8-7
+# ======================================================================
+
+# --- Arithmetic (type=00) left shift ---
+shift_operand: shift_cnt5  is shift_type=0 & shift_dir=0 & shift_cnt5 & shift7 {
+    local val:2 = shift7;
+    export val;
+}
+
+# --- Arithmetic (type=00) right shift ---
+shift_operand: "SHR "^rcount  is shift_type=0 & shift_dir=1 & shift_cnt5 & shift7 [ rcount = 32 - shift_cnt5; ] {
+    local val:2 = shift7;
+    export val;
+}
+
+# --- ROT (type=01) left shift ---
+shift_operand: "ROT "^shift_cnt5  is shift_type=1 & shift_dir=0 & shift_cnt5 & shift7 {
+    local val:2 = shift7 | 0x80;
+    export val;
+}
+
+# --- ROT (type=01) right shift ---
+shift_operand: "ROT SHR "^rcount  is shift_type=1 & shift_dir=1 & shift_cnt5 & shift7 [ rcount = 32 - shift_cnt5; ] {
+    local val:2 = shift7 | 0x80;
+    export val;
+}
+
+# --- ZIN (type=10) left shift ---
+shift_operand: "ZIN "^shift_cnt5  is shift_type=2 & shift_dir=0 & shift_cnt5 & shift7 {
+    local val:2 = shift7 | 0x100;
+    export val;
+}
+
+# --- ZIN (type=10) right shift ---
+shift_operand: "ZIN SHR "^rcount  is shift_type=2 & shift_dir=1 & shift_cnt5 & shift7 [ rcount = 32 - shift_cnt5; ] {
+    local val:2 = shift7 | 0x100;
+    export val;
+}
+
+# --- LIN (type=11) left shift ---
+shift_operand: "LIN "^shift_cnt5  is shift_type=3 & shift_dir=0 & shift_cnt5 & shift7 {
+    local val:2 = shift7 | 0x180;
+    export val;
+}
+
+# --- LIN (type=11) right shift ---
+shift_operand: "LIN SHR "^rcount  is shift_type=3 & shift_dir=1 & shift_cnt5 & shift7 [ rcount = 32 - shift_cnt5; ] {
+    local val:2 = shift7 | 0x180;
+    export val;
+}

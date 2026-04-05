@@ -1,0 +1,3 @@
+    # 143300 octal = 0xC6C0, 10-bit mask
+    local ea:2 = X + disp3;                  # T/X addressing (X + 3-bit displacement)
+    A = *:2 ea;                              # Load into A register

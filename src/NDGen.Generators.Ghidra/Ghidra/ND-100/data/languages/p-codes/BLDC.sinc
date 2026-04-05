@@ -1,0 +1,8 @@
+# BLDC: Load K and complement
+:BLDC is op9=0x1FA {
+    # BLDC: Load single bit accumulator (K) and complement
+    # This instruction loads K with complement of some bit value
+    # K is bit 8 of the STS register (multi-shift flag)
+    local current_k:1 = STS[8,8];                # Get current K flag value
+    STS[8,8] = !current_k;                       # Set K to complement of current value
+}

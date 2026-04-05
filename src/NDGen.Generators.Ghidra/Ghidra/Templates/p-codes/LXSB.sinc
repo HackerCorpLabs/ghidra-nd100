@@ -1,0 +1,5 @@
+    # 140704 octal = 0xC1C4, 10-bit mask
+    # LXSB: Bank operation with B-relative addressing
+    local ea:2 = B + disp3;              # B-relative addressing with 3-bit displacement
+    X = *:2 ea;                               # Load into X register from bank
+    # LXSB: Bank type determined by instruction - Core Map Bank (CMB) or Segment Table Bank (STB)

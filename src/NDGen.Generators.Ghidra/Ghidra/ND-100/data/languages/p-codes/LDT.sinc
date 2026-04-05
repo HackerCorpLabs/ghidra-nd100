@@ -1,0 +1,4 @@
+:LDT memref is op5=0x0A & memref {  # Top 5 bits: 01010 = 0x0A, mask 1111_1000_0000_0000
+    # LDT: Load T register from memory - supports all 8 addressing modes
+    T = memref;                             # Load 16-bit value using addressing mode
+}

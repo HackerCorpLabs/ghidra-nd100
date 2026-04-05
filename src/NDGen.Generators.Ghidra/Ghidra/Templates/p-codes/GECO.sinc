@@ -1,0 +1,2 @@
+    # GECO: Customer-specific instruction (ND-100/CE and later)
+    nd100_geco(A, B, D, X);

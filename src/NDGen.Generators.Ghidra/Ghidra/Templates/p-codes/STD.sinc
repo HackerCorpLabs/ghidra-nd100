@@ -1,0 +1,6 @@
+    # 020000 octal = 0x2000, 5-bit mask (ea_addr)
+    # STD: Store double word — A to (EA), D to (EA+1)
+    local ea:2 = ea_addr;
+    *:2 ea = A;
+    local ea1:2 = ea + 1;
+    *:2 ea1 = D;

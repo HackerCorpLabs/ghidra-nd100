@@ -1,0 +1,2 @@
+    # 010000 octal = 0x1000, 5-bit mask (addr)
+    addr = T;                                # Store T to effective address (addr sub-table)

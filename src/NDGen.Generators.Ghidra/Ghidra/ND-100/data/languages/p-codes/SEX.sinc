@@ -1,0 +1,5 @@
+# SEX: Set extended address mode
+:SEX is op16=0xC155 {
+    # TODO: Implement P-code for SEX - Set extended address mode
+    # This instruction sets extended addressing mode
+}

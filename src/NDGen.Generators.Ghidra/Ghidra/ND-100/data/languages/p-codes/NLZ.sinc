@@ -1,0 +1,6 @@
+:NLZ disp is op8=0xD3 & disp {  # 0151400 octal = 0xD300, mask 1111_1111_0000_0000 (8 bits), pattern 0xD3
+    # NLZ: Normalize floating point number
+    # Note: Complex floating-point normalization operation
+    # Simplified: shifts mantissa and adjusts exponent
+    # Full implementation requires floating-point format knowledge
+}

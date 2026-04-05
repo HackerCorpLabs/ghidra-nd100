@@ -1,0 +1,11 @@
+# MIN: Memory Increment — increment word at EA, skip next if result is zero
+# Full constructor to include skip_next sub-table for decompiler support
+
+:MIN addr^" "^skip_next is op5=0x08 & addr & skip_next {
+    local memval:2 = addr;
+    local result:2 = memval + 1;
+    addr = result;
+    if (result != 0) goto <no_skip>;
+    goto skip_next;
+<no_skip>
+}

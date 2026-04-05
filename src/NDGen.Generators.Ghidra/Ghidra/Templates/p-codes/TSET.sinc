@@ -1,0 +1,3 @@
+    # TSET: Test and set — A = mem[T], then mem[T] = 0xFFFF
+    # C source: gA = MemoryRead(gT); MemoryWrite(0xFFFF, gT)
+    A = nd100_tset(T);

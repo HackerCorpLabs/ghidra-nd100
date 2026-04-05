@@ -1,0 +1,3 @@
+    # MOVEW: Word block move — uses A, D, X, T, L for addresses and count
+    # YAML: L = word count
+    nd100_movew(reg3, A, D, X, T, L);

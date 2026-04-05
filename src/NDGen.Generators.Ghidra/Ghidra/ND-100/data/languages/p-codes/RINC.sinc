@@ -1,0 +1,22 @@
+# RINC: Register increment (compound mnemonic for RADD AD1)
+# 13-bit mask instruction, last 3 bits specify destination register
+:RINC reg3 is op13=0x1CA0 & reg3 {
+    # RINC: Register increment - compound mnemonic for "RADD AD1"
+    # This increments the specified register by 1
+    # Register destination specified in bits 2-0
+    local old_val:2 = 0;
+    local new_val:4 = 0;
+    local overflow:1 = 0;
+
+    # TODO: Need proper register decoding based on reg3 value
+    # For now, just increment A register as example
+    old_val = A;
+    new_val = zext(A) + 1;
+    A = new_val:2;
+
+    # Set flags like RADD instruction
+    STS[6,6] = (new_val >> 16) != 0;             # Carry flag (C) - bit 6
+    overflow = (old_val == 0x7FFF) && (A == 0x8000); # Overflow from max positive to negative
+    STS[5,5] = overflow;                         # Static overflow flag (O) - bit 5
+    STS[4,4] = overflow;                         # Dynamic overflow flag (Q) - bit 4
+}

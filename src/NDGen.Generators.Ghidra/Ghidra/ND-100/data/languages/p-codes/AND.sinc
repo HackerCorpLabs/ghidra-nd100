@@ -1,0 +1,11 @@
+:AND disp is op8=0x70 & disp {  # 160000 octal = 0xE000, top 5 bits = 0x70
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    local mem_value:2 = *:2 addr;
+    A = A & mem_value;                      # Bitwise AND with memory location
+
+    # Set flags based on result
+    STS[3,3] = (A == 0);                   # Zero flag (Z) - bit 3
+    STS[4,4] = (A & 0x8000) != 0;          # Sign flag (Q) - bit 4
+    STS[5,5] = 0;                          # Clear overflow flag (O) - bit 5
+    STS[6,6] = 0;                          # Clear carry flag (C) - bit 6
+}

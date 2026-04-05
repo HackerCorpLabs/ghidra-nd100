@@ -1,0 +1,5 @@
+# REMPL: Remove page from page list
+:REMPL is op16=0xC141 {
+    # TODO: Implement P-code for REMPL - Remove page from page list
+    # This instruction removes a page from the page list
+}

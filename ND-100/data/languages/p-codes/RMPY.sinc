@@ -1,0 +1,9 @@
+    # RMPY: 32-bit signed multiply, result in A:D
+    # C source: handles signs separately, C if |result| > 16 bits
+    local src_val:2 = rop_src;
+    local dst_val:2 = rop_dst;
+    local result:4 = sext(src_val) * sext(dst_val); # 32-bit signed multiply
+    A = result(2);                                # High 16 bits to A
+    D = result:2;                                 # Low 16 bits to D
+    # C = 1 if result doesn't fit in 16 bits (check absolute value)
+    STS[6,6] = (result s> 32767) | (result s< -32768);

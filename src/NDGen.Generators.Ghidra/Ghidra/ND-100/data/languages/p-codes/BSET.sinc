@@ -1,0 +1,5 @@
+# BSET: Set specified bit equal to specified condition
+:BSET is op9=0x1F0 {
+    # TODO: Implement P-code for BSET - Set specified bit equal to specified condition
+    # This instruction sets a bit based on a condition
+}

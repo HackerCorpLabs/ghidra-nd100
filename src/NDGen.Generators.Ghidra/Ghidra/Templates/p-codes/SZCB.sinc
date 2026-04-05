@@ -1,0 +1,3 @@
+    # 140707 octal = 0xC1C7, 10-bit mask
+    local ea:2 = B + disp3;                  # B-relative addressing with 3-bit displacement
+    *:2 ea = 0;                              # Store zero to memory location

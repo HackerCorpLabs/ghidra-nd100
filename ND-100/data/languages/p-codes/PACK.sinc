@@ -1,0 +1,3 @@
+    # PACK: Convert ASCII to packed BCD — A+D (source), X+T (destination)
+    # Skips next instruction on success
+    nd100_bcd_pack(A, D, T, X);

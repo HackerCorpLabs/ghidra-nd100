@@ -1,0 +1,2 @@
+    # LRB: Load register bank — load all registers for a priority level from memory at X
+    nd100_lrb(rop_src, rop_dst, X);

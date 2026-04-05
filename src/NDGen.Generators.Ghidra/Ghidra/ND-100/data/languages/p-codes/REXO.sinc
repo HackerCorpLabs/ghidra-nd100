@@ -1,0 +1,8 @@
+# REXO: Register exclusive OR operation
+:REXO disp3 is op10=0x328 & disp3 & fixed3=0x0 {
+    # REXO: Register exclusive OR operation
+    # TODO: Full implementation requires register operand decoding
+    local reg_operand:2 = disp3;              # 3-bit register/operand selector
+    # A = A ^ register_value(reg_operand);     # XOR A with selected register
+    # This instruction performs XOR between A and another register
+}

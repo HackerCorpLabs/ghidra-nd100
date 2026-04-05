@@ -1,0 +1,7 @@
+# PACK: Convert ASCII to BCD (Binary Coded Decimal)
+:PACK is op16=0xC054 {
+    # PACK: Convert ASCII to BCD (Binary Coded Decimal)
+    # TODO: Full implementation requires ASCII to BCD conversion logic
+    # Converts ASCII representation in memory to packed BCD format
+    # Used for decimal arithmetic operations on text input
+}

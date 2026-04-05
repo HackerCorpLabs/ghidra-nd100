@@ -1,0 +1,2 @@
+    # REMPL: Remove page from page list — privileged
+    nd100_page_op(A, D, T, X);

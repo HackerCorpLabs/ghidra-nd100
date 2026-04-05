@@ -1,0 +1,117 @@
+/* ###
+ * IP: GHIDRA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+// AUTO-GENERATED from specs/mon-calls.json — DO NOT EDIT
+package nd.bpun;
+
+import ghidra.app.services.AbstractAnalyzer;
+import ghidra.app.services.AnalysisPriority;
+import ghidra.app.services.AnalyzerType;
+import ghidra.app.util.importer.MessageLog;
+import ghidra.program.model.address.AddressSetView;
+import ghidra.program.model.listing.CommentType;
+import ghidra.program.model.listing.Instruction;
+import ghidra.program.model.listing.InstructionIterator;
+import ghidra.program.model.listing.Listing;
+import ghidra.program.model.listing.Program;
+import ghidra.util.exception.CancelledException;
+import ghidra.util.task.TaskMonitor;
+
+/**
+ * Analyzer that annotates MON (monitor call) instructions with the system
+ * call name and octal number from SINTRAN III documentation.
+ *
+ * Auto-generated from specs/mon-calls.json (231 monitor calls).
+ */
+public class ND100MonCallAnalyzer extends AbstractAnalyzer {
+
+	private static final String NAME = "ND-100 MON Call Annotator";
+	private static final String DESCRIPTION =
+		"Annotates MON instructions with SINTRAN III monitor call names.";
+
+	// {{MON_CALL_TABLE}}
+
+	public ND100MonCallAnalyzer() {
+		super(NAME, DESCRIPTION, AnalyzerType.INSTRUCTION_ANALYZER);
+		setDefaultEnablement(true);
+		setPriority(AnalysisPriority.REFERENCE_ANALYSIS.after().after());
+	}
+
+	@Override
+	public boolean getDefaultEnablement(Program program) {
+		return true;
+	}
+
+	@Override
+	public boolean canAnalyze(Program program) {
+		String langId = program.getLanguageID().getIdAsString();
+		return langId.startsWith("ND-100:");
+	}
+
+	@Override
+	public boolean added(Program program, AddressSetView set, TaskMonitor monitor, MessageLog log)
+			throws CancelledException {
+
+		Listing listing = program.getListing();
+		InstructionIterator instrIter = listing.getInstructions(set, true);
+
+		while (instrIter.hasNext()) {
+			monitor.checkCancelled();
+			Instruction instr = instrIter.next();
+
+			if (!"MON".equals(instr.getMnemonicString())) {
+				continue;
+			}
+
+			// Get the displacement operand (MON call number)
+			int numOps = instr.getNumOperands();
+			if (numOps < 1) {
+				continue;
+			}
+
+			// Parse the operand value — it's the 8-bit displacement
+			String opRepr = instr.getDefaultOperandRepresentation(0);
+			if (opRepr == null) {
+				continue;
+			}
+
+			int callNum;
+			try {
+				if (opRepr.startsWith("0x") || opRepr.startsWith("0X")) {
+					callNum = Integer.parseInt(opRepr.substring(2), 16);
+				} else {
+					callNum = Integer.parseInt(opRepr);
+				}
+			} catch (NumberFormatException e) {
+				continue;
+			}
+
+			callNum = callNum & 0xFF;
+			if (callNum < 0 || callNum >= MON_NAMES.length || MON_NAMES[callNum] == null) {
+				continue;
+			}
+
+			// Don't overwrite existing comments
+			String existing = instr.getComment(CommentType.EOL);
+			if (existing != null && existing.length() > 0) {
+				continue;
+			}
+
+			instr.setComment(CommentType.EOL, MON_NAMES[callNum]);
+		}
+
+		return true;
+	}
+}

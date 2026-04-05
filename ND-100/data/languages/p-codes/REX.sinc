@@ -1,0 +1,2 @@
+    # REX: Reset extended addressing mode (back to 19-bit)
+    SEXI = 0;

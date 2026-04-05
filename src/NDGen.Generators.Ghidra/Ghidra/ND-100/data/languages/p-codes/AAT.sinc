@@ -1,0 +1,5 @@
+:AAT disp is op8=0xF6 & disp {  # 173000 octal = 0xF600, mask 1111_1111_0000_0000 (8 bits), pattern 0xF6
+    # AAT: Add argument to T - T = T + disp (sign-extended)
+    local sext_disp:2 = sext(disp:1);
+    T = T + sext_disp;
+}

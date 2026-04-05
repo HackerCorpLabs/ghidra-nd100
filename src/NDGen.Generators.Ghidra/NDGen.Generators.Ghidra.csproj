@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CLSCompliant>true</CLSCompliant>
+    <RootNamespace>NDGen.Generators.Ghidra</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NDGen.Generators.Common\NDGen.Generators.Common.csproj" />
+    <ProjectReference Include="..\..\nd100-definitions\src\ND100.Definitions\ND100.Definitions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="QuestPDF" Version="2026.2.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,4 @@
+:SAA disp is op8=0xF1 & disp {  # 170400 octal = 0xF100, mask 1111_1111_0000_0000 (8 bits), pattern 0xF1
+    # SAA: Set argument to A - A = disp (sign-extended)
+    A = sext(disp:1);
+}

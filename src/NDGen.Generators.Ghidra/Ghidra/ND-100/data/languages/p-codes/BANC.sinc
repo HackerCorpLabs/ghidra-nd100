@@ -1,0 +1,40 @@
+# BANC: Logical AND with complement - 9-bit mask instruction
+# YAML: mask "1111_1111_1000_0000", opcode "177000" (octal)
+# K flag logical operation with bit complement
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.BitOperationInstructions.cs:322
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Bit source determination:
+#    - if (roDst == ROPRegister.Invalid): bitSet = GetSTSRegister(bopStatusRegister)
+#    - else: bitSet = isBitSet(GetRopRegister(roDst), bopBN)
+#
+# 2. K flag operation:
+#    - K = !bitSet && K  # K AND (NOT bit)
+#    - Logical AND between K flag and complement of specified bit
+#
+# 3. Dual bit source modes:
+#    - Register mode: Test bit bopBN in register roDst
+#    - Status mode: Test status register bit when roDst == Invalid
+#
+# 4. Critical K flag semantics:
+#    - Operation: K ← K ∧ ¬bit
+#    - K remains true only if both K was true AND bit is false
+#    - Implements logical AND with complement for 1-bit operations
+#
+# One-bit accumulator logical operation for complex bit manipulation.
+# Used in multi-bit logical sequences and conditional bit processing.
+#
+# P-code implementation (documented - cannot compile due to 9-bit mask):
+# local bit_val:1;
+# if (dr == 7) {  # Invalid register = status register mode
+#     bit_val = GetStatusBit(bn);
+# } else {
+#     local reg_val:2 = GetRopRegister(dr);
+#     bit_val = (reg_val >> bn) & 1;
+# }
+# STS_K = STS_K & (~bit_val);
+#
+# SLEIGH Limitation: Cannot implement due to 9-bit mask
+# Manual implementation would require sub-tables for register combinations

@@ -1,0 +1,3 @@
+    # SBITP: Store single bit accumulator K to physical memory bit (ND-110/CX)
+    # YAML: T = bank, X = bit array base, A = bit index
+    nd100_sbit(A, X, T);

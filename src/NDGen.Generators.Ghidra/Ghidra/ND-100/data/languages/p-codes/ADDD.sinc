@@ -1,0 +1,9 @@
+# ADDD: Add decimal (BCD) values from A and D registers
+:ADDD is op16=0xC050 {
+    # ADDD: Add decimal (BCD) values from A and D registers
+    # TODO: Full BCD arithmetic implementation requires decimal adjustment
+    local result:4 = zext(A) + zext(D);       # Add as binary first
+    A = result:2;                             # Store result in A (may need BCD correction)
+    STS[6,6] = (result >> 16) != 0;           # Carry flag (C) - bit 6
+    # Note: Real BCD addition would require decimal adjust after each digit
+}

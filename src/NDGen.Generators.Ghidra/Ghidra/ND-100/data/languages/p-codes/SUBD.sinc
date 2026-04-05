@@ -1,0 +1,9 @@
+# SUBD: Subtract decimal (BCD) values - A = A - D
+:SUBD is op16=0xC051 {
+    # SUBD: Subtract decimal (BCD) values - A = A - D
+    # TODO: Full BCD arithmetic implementation requires decimal adjustment
+    local result:4 = zext(A) - zext(D);       # Subtract as binary first
+    A = result:2;                             # Store result in A (may need BCD correction)
+    STS[6,6] = (result s< 0);                 # Carry flag (C) - bit 6 for underflow
+    # Note: Real BCD subtraction would require decimal adjust for each digit
+}

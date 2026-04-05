@@ -1,0 +1,5 @@
+# SBITP: Store the single bit accumulator (K) in a physical memory bit
+:SBITP is op16=0xC14B {
+    # TODO: Implement P-code for SBITP - Store the single bit accumulator (K) in a physical memory bit
+    # This instruction stores the K register bit to physical memory
+}

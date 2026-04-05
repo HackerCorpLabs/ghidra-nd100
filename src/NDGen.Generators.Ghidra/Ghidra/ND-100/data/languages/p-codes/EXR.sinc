@@ -1,0 +1,46 @@
+# EXR: Execute register - 10-bit mask instruction
+# YAML: mask "1111_1111_1100_0000", opcode "0140600" (octal)
+# Execute instruction contained in source register
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.RegisterOperations.cs:651
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Read instruction opcode from source register:
+#    - opCode = GetRopRegister(regs.fetched.roSrc)
+#
+# 2. Create instruction from opcode:
+#    - FetchedInstruction fi = cpu.CreateInstruction(regs.fetched.StartAddress, opCode, true)
+#
+# 3. Illegal EXR recursion check:
+#    - if (fi.instruction.OpCode == 0xC180): # octal 140 600 (EXR)
+#      * STS.Z = true (error indicator)
+#      * CheckForInterruptSTS_Z() (trigger interrupt 14, sublevel 5)
+#      * return (exit without execution)
+#
+# 4. Execute the instruction:
+#    - Save current decoded instruction context
+#    - Set regs.fetchedInstructionRef = fi
+#    - ExecuteDecodedInstruction(fi, true)
+#    - Restore previous decoded instruction context
+#
+# 5. Important notes from C# comments:
+#    - Relative addressing is relative to the EXR instruction
+#    - JPL instruction: L register points to instruction after EXR
+#    - Recursive EXR is illegal and triggers Z error interrupt
+#
+# Dynamic instruction execution - modifies execution flow based on register contents.
+# Used for computed jumps, indirect instruction dispatch, and dynamic code execution.
+#
+# P-code implementation (documented - cannot compile due to 10-bit mask):
+# local opcode:2 = GetRopRegister(src_reg);
+# if (opcode == 0xC180) goto <illegal_exr>;
+# # Dynamic instruction execution not representable in static P-code
+# # Would require runtime instruction decoding and dispatch
+# call ExecuteInstruction(opcode, current_address);
+# goto <done>;
+# <illegal_exr>: STS_Z = 1; call CheckInterruptZ; return;
+# <done>:
+#
+# SLEIGH Limitation: Cannot implement due to 10-bit mask and dynamic execution
+# Manual implementation would require runtime instruction interpretation

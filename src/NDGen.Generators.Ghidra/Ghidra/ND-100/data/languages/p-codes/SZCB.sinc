@@ -1,0 +1,7 @@
+# SZCB: Store zero in core bank (CMBNK)
+:SZCB disp3 is op10=0x307 & disp3 & fixed3=0x7 {
+    # SZCB: Bank operation with B-relative addressing
+    local addr:2 = B + zext(disp3);           # B-relative addressing with 3-bit displacement
+    *:2 addr = 0;                             # Store zero to bank
+    # SZCB: Core Map Bank (CMB) - privileged memory management operation
+}

@@ -1,0 +1,4 @@
+name: BPUN Loader
+author: Ronny Hansen
+version: 1.0
+description: A custom loader plugin for ND-100 BPUN (Bootable Punched Tape) file format.

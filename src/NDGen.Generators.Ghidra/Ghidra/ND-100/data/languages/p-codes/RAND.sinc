@@ -1,0 +1,28 @@
+# RAND: Logical AND to destination - 10-bit mask instruction
+# YAML: mask "1111_1111_1100_0000", opcode "144400" (octal)
+# Logical AND operation with optional sub-instructions
+#
+# Basic operation: dr ← dr & sr
+# With sub-instructions:
+# - CLD: Use zero instead of destination register
+# - CM1: Use 1's complement of source register
+#
+# Instruction combinations:
+# RAND <sr> <dr>           dr ← dr & sr
+# RAND CLD <sr> <dr>       dr ← 0
+# RAND CM1 <sr> <dr>       dr ← dr & ~sr
+# RAND CM1 CLD <sr> <dr>   dr ← 0
+#
+# P-code implementation:
+# local src_val:2 = sr;
+# local dst_val:2 = dr;
+# if (CM1) src_val = ~src_val;
+# if (CLD) dst_val = 0;
+# dr = dst_val & src_val;
+# # Update flags based on result
+# STS[Q] = dr s< 0;  # Sign flag
+# STS[C] = 0;        # Clear carry
+# STS[O] = 0;        # Clear overflow
+#
+# SLEIGH Limitation: Cannot implement due to 10-bit mask
+# Manual implementation would require sub-tables for sub-instruction combinations

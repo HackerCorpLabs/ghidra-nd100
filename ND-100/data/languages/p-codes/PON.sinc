@@ -1,0 +1,2 @@
+    # PON: Enable paging (memory management)
+    PONI = 1;

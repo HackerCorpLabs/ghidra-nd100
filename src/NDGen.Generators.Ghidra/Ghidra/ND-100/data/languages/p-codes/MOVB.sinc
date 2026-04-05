@@ -1,0 +1,9 @@
+# MOVB: Move byte field operation
+:MOVB is op16=0xC059 {
+    # MOVB: Move byte field operation
+    # Uses T register for source field, D register for destination field
+    # TODO: Full implementation requires byte field manipulation
+    # This is a complex operation that moves bytes between memory fields
+    # After execution, bit 15 of D and T point to end of moved field
+    # Field length in D becomes zero, T field length = bytes moved
+}

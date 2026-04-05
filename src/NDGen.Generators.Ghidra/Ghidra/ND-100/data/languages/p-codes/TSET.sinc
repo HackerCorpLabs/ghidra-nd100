@@ -1,0 +1,8 @@
+# TSET: Test and set atomic operation
+:TSET is op16=0xC053 {
+    # TSET: Test and set atomic operation
+    # TODO: Full implementation requires atomic memory operation
+    # Tests memory location pointed to by effective address
+    # If zero, sets it to 1 and clears Z flag; if non-zero, sets Z flag
+    # This is typically used for mutual exclusion/locking
+}

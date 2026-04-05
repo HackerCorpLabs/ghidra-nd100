@@ -1,0 +1,5 @@
+# RDUS: Read a word without using cache
+:RDUS is op16=0xC14F {
+    # TODO: Implement P-code for RDUS - Read a word without using cache
+    # This instruction reads a memory word bypassing cache
+}

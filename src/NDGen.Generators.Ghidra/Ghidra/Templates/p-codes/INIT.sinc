@@ -1,0 +1,2 @@
+    # INIT: Initialize stack (CE/CX option)
+    nd100_init(B, L, A, T, X);

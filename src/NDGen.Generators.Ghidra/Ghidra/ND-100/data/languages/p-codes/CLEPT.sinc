@@ -1,0 +1,5 @@
+# CLEPT: Clear page tables
+:CLEPT is op16=0xC0C1 {
+    # TODO: Implement P-code for CLEPT - Clear page tables
+    # This instruction clears the page table entries
+}

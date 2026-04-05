@@ -1,0 +1,3 @@
+    # UPACK: Convert packed BCD to ASCII — A+D (source), X+T (destination)
+    # Skips next instruction on success
+    nd100_bcd_unpack(A, D, T, X);

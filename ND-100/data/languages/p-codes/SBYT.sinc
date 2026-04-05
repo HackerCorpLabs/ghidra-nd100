@@ -1,0 +1,2 @@
+    # SBYT: Store byte from A to memory — address from T+X/2
+    nd100_sbyt(A, T, X);

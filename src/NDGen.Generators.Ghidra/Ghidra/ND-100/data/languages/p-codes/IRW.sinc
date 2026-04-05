@@ -1,0 +1,17 @@
+# IRW: Inter Register Write - 8-bit mask instruction
+# YAML: mask "1111_1111_1000_0000", opcode "153400" (octal)
+# Writes A register to specified register on specified privilege level
+#
+# P-code implementation:
+# write_register_to_level(level, register, A);
+#
+# SLEIGH implementation handles level and register selection
+:IRW level, reg_dst is op8=0xD6 & level & reg_dst {
+    # Inter-level register access (simplified)
+    # In real hardware, this writes to register bank for specific privilege level
+    # For analysis purposes, treat as register copy with privilege annotation
+    reg_dst = A;
+
+    # Note: Full implementation would require privilege level checking
+    # and access to different register contexts per level
+}

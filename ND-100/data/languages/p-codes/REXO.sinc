@@ -1,0 +1,2 @@
+    # 0145000 octal = 0xCA00, 10-bit mask
+    rop_dst = rop_dst ^ rop_src;            # Exclusive OR source into destination

@@ -1,0 +1,65 @@
+# JPL: Jump and Link — 8 addressing mode constructors
+# Saves return address (inst_start + 1) in L register, then calls target
+# Mode 0 (P-relative) uses jmp_addr sub-table for Ghidra arrows
+# All other modes use call [ea] for computed/indirect targets
+
+# Mode 0: P-relative (uses jmp_addr sub-table for disassembly-resolved arrows)
+:JPL jmp_addr is op5=0x17 & X_bit=0 & I_bit=0 & B_bit=0 & jmp_addr {
+    L = inst_start + 1;
+    call jmp_addr;
+}
+
+# Mode 1: B-relative
+:JPL disp^",B" is op5=0x17 & X_bit=0 & I_bit=0 & B_bit=1 & disp {
+    L = inst_start + 1;
+    local ea:2 = B + disp;
+    call [ea];
+}
+
+# Mode 2: Indirect P-relative
+:JPL "I *"^reloc is op5=0x17 & X_bit=0 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    L = inst_start + 1;
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    call [ea];
+}
+
+# Mode 3: Indirect B-relative
+:JPL "I "^disp^",B" is op5=0x17 & X_bit=0 & I_bit=1 & B_bit=1 & disp {
+    L = inst_start + 1;
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    call [ea];
+}
+
+# Mode 4: X-indexed
+:JPL disp^",X" is op5=0x17 & X_bit=1 & I_bit=0 & B_bit=0 & disp {
+    L = inst_start + 1;
+    local ea:2 = X + disp;
+    call [ea];
+}
+
+# Mode 5: B+X-indexed
+:JPL disp^",B,X" is op5=0x17 & X_bit=1 & I_bit=0 & B_bit=1 & disp {
+    L = inst_start + 1;
+    local ea:2 = B + X + disp;
+    call [ea];
+}
+
+# Mode 6: Indirect P-relative + X-indexed
+:JPL ",X I *"^reloc is op5=0x17 & X_bit=1 & I_bit=1 & B_bit=0 & disp [ reloc = inst_start + disp; ] {
+    L = inst_start + 1;
+    local ptr:2 = reloc;
+    local ea:2 = *:2 ptr;
+    local target:2 = ea + X;
+    call [target];
+}
+
+# Mode 7: Indirect B-relative + X-indexed
+:JPL ",X I "^disp^",B" is op5=0x17 & X_bit=1 & I_bit=1 & B_bit=1 & disp {
+    L = inst_start + 1;
+    local ptr:2 = B + disp;
+    local ea:2 = *:2 ptr;
+    local target:2 = ea + X;
+    call [target];
+}

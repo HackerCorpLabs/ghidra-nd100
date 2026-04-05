@@ -1,0 +1,10 @@
+# IOX: Exchange information between I/O system and A register - 5-bit mask instruction
+# YAML: mask "1111_1000_0000_0000", opcode "0164000" (octal)
+# Bidirectional I/O transfer based on direction bit
+#
+# P-code implementation for I/O exchange:
+:IOX disp is op5=0x1D & disp {
+    # Simplified I/O operation - device address in displacement field
+    local device_reg:2 = disp;
+    A = *[io_space]:2 device_reg;
+}

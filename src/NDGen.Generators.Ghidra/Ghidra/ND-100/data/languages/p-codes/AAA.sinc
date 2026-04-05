@@ -1,0 +1,5 @@
+:AAA disp is op8=0xF5 & disp {  # 172400 octal = 0xF500, mask 1111_1111_0000_0000 (8 bits), pattern 0xF5
+    # AAA: Add argument to A - A = A + disp (sign-extended)
+    local sext_disp:2 = sext(disp:1);
+    A = A + sext_disp;
+}

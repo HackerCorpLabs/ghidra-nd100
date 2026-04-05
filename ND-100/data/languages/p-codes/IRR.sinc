@@ -1,0 +1,3 @@
+    # IRR: Inter-level register read — read register from another level into A
+    local level:1 = bit4;
+    A = nd100_irr(level, reg3);

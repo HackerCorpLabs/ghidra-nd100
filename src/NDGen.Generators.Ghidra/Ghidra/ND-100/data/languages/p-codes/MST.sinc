@@ -1,0 +1,39 @@
+# MST: Masked set - 12-bit mask instruction
+# YAML: mask "1111_1111_1111_0000", opcode "0150300" (octal)
+# Requires: Privileged mode operation
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.AccumulatorTransferInstructions.cs:176
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Register selection:
+#    - r = (AccumulatorTransferFromARegister)regs.fetched.atiRegister
+#    - Only supports STS (1), PID (6), PIE (7)
+#
+# 2. Masked set operation:
+#    - STS: sts = sts | (A & 0xFF); WriteBits(sts)
+#    - PID: TRR_PID(PID | A)  # Set interrupt detect bits
+#    - PIE: TRR_PIE(PIE | A)  # Set interrupt enable bits
+#
+# 3. No special interrupt processing:
+#    - Unlike MCL, MST does not call CheckForInterruptSTS_Z()
+#    - No checkit flag manipulation (interrupt system handles enable changes)
+#    - Commented debug logging available for interrupt debugging
+#
+# 4. Error handling:
+#    - Unexpected register generates warning log message
+#
+# Uses A register as mask to set bits in internal register.
+# Critical for enabling interrupts and setting system status flags.
+#
+# P-code implementation (documented - cannot compile due to 12-bit mask):
+# local reg_id:1 = inst[3,0];
+# switch (reg_id) {
+#   case 1: STS = (STS | A) & 0xFF; call WriteSTS; break;
+#   case 6: PID = PID | A; call UpdatePID; break;
+#   case 7: PIE = PIE | A; call UpdatePIE; break;
+#   default: call LogWarning("Invalid MST register");
+# }
+#
+# SLEIGH Limitation: Cannot implement due to 12-bit mask
+# Manual implementation would require sub-tables for register enumeration

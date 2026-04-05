@@ -1,0 +1,29 @@
+:FMU disp is op5=0x12 & disp {  # 110000 octal = 0x9000, mask 1111_1000_0000_0000 (5 bits), pattern 0x12
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    # FMU: Floating-point multiply accumulator (A,D) = (A,D) * memory[EA]
+    # ND-100 floating point format: A=mantissa, D=exponent
+
+    local mem_mantissa:2 = *:2 addr;         # Load mantissa from memory
+    local mem_exponent:2 = *:2 (addr + 1);   # Load exponent from next word
+
+    # Floating-point multiplication
+    # 1. Multiply mantissas
+    local mantissa_product:4 = zext(A) * zext(mem_mantissa);
+    A = mantissa_product:2;  # Store lower 16 bits (simplified)
+
+    # 2. Add exponents
+    local exponent_sum:4 = zext(D) + zext(mem_exponent);
+    D = exponent_sum:2;
+
+    # 3. Check for overflow in mantissa multiplication
+    if ((mantissa_product >> 16) != 0) goto <normalize>;
+    goto <done>;
+
+    <normalize>
+    # Normalize result if mantissa overflow occurred
+    A = A >> 1;  # Shift mantissa right
+    D = D + 1;   # Increment exponent
+
+    <done>
+    # TODO: Set floating-point flags (overflow, underflow, zero)
+}

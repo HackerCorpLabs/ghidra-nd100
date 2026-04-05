@@ -1,0 +1,5 @@
+    # 146400 octal = 0xCD00, 13-bit mask
+    STS[5,5] = scarry(reg3, 1);            # O = signed overflow on increment
+    STS[4,4] = STS[4,4] | STS[5,5];       # Q = sticky overflow
+    STS[6,6] = carry(reg3, 1);             # C = unsigned carry
+    reg3 = reg3 + 1;                       # Increment destination register

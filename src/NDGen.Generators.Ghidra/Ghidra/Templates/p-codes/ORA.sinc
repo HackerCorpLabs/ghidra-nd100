@@ -1,0 +1,3 @@
+    # 074000 octal = 0x7800, 5-bit mask (addr)
+    local memval:2 = addr;                    # Load memory value via addr sub-table
+    A = A | memval;                          # Bitwise OR with memory value

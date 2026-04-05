@@ -1,0 +1,37 @@
+# JAF: Jump if A Filled (not zero) - 8-bit mask instruction
+# YAML: mask "1111_1111_0000_0000", opcode "0131400" (octal)
+# Conditional jump based on A register non-zero test
+#
+# C# EMULATOR ANALYSIS COMPLETE
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.SequencingInstructions.cs:118
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Condition evaluation:
+#    - condition = (regs.currentRegisters.A != 0)
+#
+# 2. No flag side effects:
+#    - Unlike JAZ, JAF does not modify any status flags
+#    - Pure conditional jump based on register content
+#
+# 3. Conditional jump logic (CJP helper):
+#    - if (!condition) return;  # No jump if A == 0
+#    - regs.PC = doAdd((ushort)(regs.PC - 1), (ushort)regs.fetched.mriDisplacement)
+#
+# 4. Address calculation:
+#    - Target = (PC - 1) + displacement  # PC already incremented before call
+#    - Range: -128 to +127 words (signed 8-bit displacement)
+#    - Uses doAdd() for proper overflow handling
+#
+# 5. Jump conditions:
+#    - JUMP: A != 0 (A register contains any non-zero value)
+#    - NO JUMP: A == 0 (continue to next instruction)
+#
+# Conditional branching for non-zero test, complement of JAZ instruction.
+# Used for loop continuation and non-null value testing.
+#
+:JAF disp is op8=0xB3 & disp {  # 0131400 octal = 0xB300, mask 1111_1111_0000_0000 (8 bits), pattern 0xB3
+    # FIXED IMPLEMENTATION: Use same pattern as working JMP instruction
+    local addr:2 = inst_start + 1 + disp;  # Calculate PC-relative target (same as JMP)
+    if (A != 0) goto [addr];  # Jump if A is not zero using calculated address
+}
+# SLEIGH Pattern Works: x86 and 68000 use identical "if (condition) goto constructor" pattern

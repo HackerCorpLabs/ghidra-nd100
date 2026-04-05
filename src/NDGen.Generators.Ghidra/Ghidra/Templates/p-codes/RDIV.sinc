@@ -1,0 +1,17 @@
+    # RDIV: 32-bit A:D / src, quotient->A, remainder->D
+    # C source: signed divide, Z on overflow/div-by-zero, C if |quotient| >= 32768
+    local dividend:4 = (zext(A) << 16) | zext(D); # 32-bit A:D
+    if (rop_src == 0) goto <div_zero>;
+    local quotient:4 = dividend s/ sext(rop_src);  # Signed divide
+    local remainder:4 = dividend s% sext(rop_src); # Signed remainder
+    # Check overflow: |quotient| >= 32768
+    local ovf:1 = (quotient s> 32767) | (quotient s< -32768);
+    if (ovf != 0) goto <overflow>;
+    A = quotient:2;                                # Quotient to A
+    D = remainder:2;                               # Remainder to D
+    STS[6,6] = 0;                                  # C = 0 (fits in 16 bits)
+    goto <done>;
+<div_zero>
+<overflow>
+    STS[3,3] = 1;                                  # Z = 1 (error flag, bit 3)
+<done>

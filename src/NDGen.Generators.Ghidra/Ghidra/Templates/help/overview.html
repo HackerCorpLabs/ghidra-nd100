@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+    <META http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <TITLE>ND-100 Processor Support</TITLE>
+    <LINK rel="stylesheet" type="text/css" href="help/shared/DefaultStyle.css">
+</HEAD>
+<BODY>
+    <H1><a name="ND-100Overview"></a>ND-100 Processor Support</H1>
+    
+    <P>This extension provides comprehensive support for the Norsk Data ND-100 16-bit minicomputer architecture in Ghidra.</P>
+    
+    <H2>Features</H2>
+    <UL>
+        <LI><B>Complete Instruction Set</B> - Support for all 153 ND-100 instructions</LI>
+        <LI><B>BPUN File Loader</B> - Native support for Bootable Punched Tape format</LI>
+        <LI><B>Architecture Support</B> - 16-bit big-endian processor with 64KB address space</LI>
+        <LI><B>Symbol Recognition</B> - Automatic entry point and symbol detection</LI>
+    </UL>
+    
+    <H2>Architecture Overview</H2>
+    <P>The ND-100 is a 16-bit big-endian minicomputer with the following characteristics:</P>
+    <UL>
+        <LI><B>Word Size:</B> 16 bits</LI>
+        <LI><B>Address Space:</B> 64KB (0x0000 - 0xFFFF)</LI>
+        <LI><B>Byte Order:</B> Big-endian (MSB first)</LI>
+        <LI><B>Registers:</B> A, B, D, L, P, T, X, STS</LI>
+    </UL>
+    
+    <H2>Getting Started</H2>
+    <OL>
+        <LI>Import a BPUN file or ND-100 binary</LI>
+        <LI>Select the <B>ND-100:BE:16:default</B> language if prompted</LI>
+        <LI>Run Ghidra's auto-analysis</LI>
+        <LI>Refer to the <A href="help/topics/nd100/instructions.html">Instruction Reference</A> for detailed instruction information</LI>
+    </OL>
+    
+    <H2>See Also</H2>
+    <UL>
+        <LI><A href="help/topics/nd100/instructions.html">ND-100 Instruction Reference</A></LI>
+        <LI><A href="help/topics/nd100/bpun_format.html">BPUN File Format</A></LI>
+        <LI><A href="help/topics/nd100/architecture.html">Architecture Details</A></LI>
+    </UL>
+</BODY>
+</HTML>

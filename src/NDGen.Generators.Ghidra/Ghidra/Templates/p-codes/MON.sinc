@@ -1,0 +1,5 @@
+    # 153000 octal = 0xD600, 8-bit mask
+    # MON: Monitor call — software trap to interrupt level 14
+    # C source: mon_code = IR & 0x1ff, store to level 14 T register, trigger interrupt(14)
+    local mon_code:1 = imm8;
+    nd100_mon(mon_code);

@@ -1,0 +1,6 @@
+    # 024000 octal = 0x2800, 5-bit mask (ea_addr)
+    # LDD: Load double word — A from (EA), D from (EA+1)
+    local ea:2 = ea_addr;
+    A = *:2 ea;
+    local ea1:2 = ea + 1;
+    D = *:2 ea1;

@@ -1,0 +1,6 @@
+    # 151000 octal = 0xD200, 8-bit mask
+    # WAIT: Relinquish priority or halt if interrupts disabled
+    # C source: if IONI off -> stop CPU; if level 0 -> nop;
+    #           else clear PID bit for current level, trigger reschedule
+    local wait_code:2 = disp & 0xFF;
+    nd100_wait(wait_code);

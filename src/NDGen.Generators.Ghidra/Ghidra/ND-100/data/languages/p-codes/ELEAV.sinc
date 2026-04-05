@@ -1,0 +1,19 @@
+# ELEAV: Error Leave Stack - 16-bit unique instruction
+# YAML: mask "1111_1111_1111_1111", opcode "0140137" (octal)
+# Stack exit with error handling
+
+:ELEAV is op16=0xC05F {  # 0140137 octal = 0xC05F
+    # ELEAV: Error leave stack frame
+    # Decrements return address and leaves with error code
+
+    local link_addr:2 = B - 0x80;                # LINK address (B = 200 octal)
+    local return_addr:2 = *:2 link_addr;         # Get LINK value
+    *:2 link_addr = return_addr - 1;             # LINK = LINK - 1 (decrement return address)
+
+    local prev_frame:2 = *:2 (B - 0x7F);        # PREVB = (B = 177 octal)
+    local error_code:2 = *:2 (B - 0x75);        # ERRCODE from (B = 173 octal)
+
+    A = error_code;         # (A) = ERRCODE
+    B = prev_frame;         # Restore previous frame pointer
+    P = return_addr - 1;    # Jump to decremented return address
+}

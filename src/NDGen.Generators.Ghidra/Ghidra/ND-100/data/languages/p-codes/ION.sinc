@@ -1,0 +1,10 @@
+# ION: Interrupt System ON - 16-bit unique instruction (no operands)
+# YAML: mask "1111_1111_1111_1111", opcode "150402" (octal)
+# Complete 16-bit instruction word, no displacement field
+
+:ION is op16=0xD902 {  # 150402 octal = 0xD902
+    # ION: Enable interrupt system
+    # Sets IONI flag to enable interrupts and resume highest priority program level
+    IONI = 1;  # Enable interrupt system flag
+    # Note: Full implementation would trigger priority level switching
+}

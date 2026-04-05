@@ -1,0 +1,35 @@
+# LBYT: Load byte from memory to A register - 16-bit mask instruction
+# YAML: mask "1111_1111_1111_1111", opcode "142200" (octal)
+# Load byte from character string into A register
+#
+# Addressing: EL = (T) + (X)/2
+# - If LSB of X = 1: Load right byte (bits 7-0)
+# - If LSB of X = 0: Load left byte (bits 15-8)
+#
+# T contains base address of character string
+# X contains byte offset within string
+# A[15-8] cleared, A[7-0] loaded with byte
+#
+# P-code implementation:
+# local word_addr:2 = T + (X >> 1);
+# local word_data:2 = *:2 word_addr;
+# local byte_select:1 = X & 1;
+# if (byte_select == 0) {
+#     # Load left byte (high byte of word)
+#     A = (word_data >> 8) & 0xFF;
+# } else {
+#     # Load right byte (low byte of word)
+#     A = word_data & 0xFF;
+# }
+#
+# SLEIGH Limitation: Cannot implement due to 16-bit mask
+# Manual implementation would be:
+# :LBYT {
+#     local word_addr:2 = T + (X >> 1);
+#     local word_data:2 = *:2 word_addr;
+#     if ((X & 1) == 0) {
+#         A = (word_data >> 8) & 0xFF;  # Left byte
+#     } else {
+#         A = word_data & 0xFF;         # Right byte
+#     }
+# }

@@ -1,0 +1,2 @@
+    # SEX: Set extended addressing mode (24-bit)
+    SEXI = 1;

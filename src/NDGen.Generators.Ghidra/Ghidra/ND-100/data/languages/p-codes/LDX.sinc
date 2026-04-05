@@ -1,0 +1,4 @@
+:LDX memref is op5=0x0B & memref {  # Top 5 bits: 01011 = 0x0B, mask 1111_1000_0000_0000
+    # LDX: Load X register from memory - supports all 8 addressing modes
+    X = memref;                             # Load 16-bit value using addressing mode
+}

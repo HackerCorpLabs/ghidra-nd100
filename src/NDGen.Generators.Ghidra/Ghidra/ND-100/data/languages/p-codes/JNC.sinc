@@ -1,0 +1,42 @@
+# JNC: Jump if Negative Count - 8-bit mask instruction
+# YAML: mask "1111_1111_0000_0000", opcode "0132400" (octal)
+# Count X register and conditional jump if negative
+#
+# C# EMULATOR ANALYSIS COMPLETE
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.SequencingInstructions.cs:171
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. X register increment (ALWAYS performed):
+#    - regs.currentRegisters.X = (ushort)(regs.currentRegisters.X + 1)
+#
+# 2. Condition evaluation (after increment):
+#    - condition = ((regs.currentRegisters.X & (1 << 15)) != 0)
+#    - Tests bit 15 of X register (sign bit)
+#
+# 3. Two-step operation:
+#    - Step 1: X ← X + 1 (always executed)
+#    - Step 2: if (X[15] == 1) then jump (negative after increment)
+#
+# 4. Conditional jump logic (CJP helper):
+#    - if (!condition) return;  # No jump if X positive/zero after increment
+#    - regs.PC = doAdd((ushort)(regs.PC - 1), (ushort)regs.fetched.mriDisplacement)
+#
+# 5. Address calculation:
+#    - Target = (PC - 1) + displacement  # PC already incremented before call
+#    - Range: -128 to +127 words (signed 8-bit displacement)
+#
+# 6. Jump conditions:
+#    - JUMP: X[15] == 1 after increment (X negative)
+#    - NO JUMP: X[15] == 0 after increment (X positive or zero)
+#
+# Count-and-jump instruction for loop control, complement of JPC.
+# Used for implementing loop termination when counter becomes negative.
+#
+:JNC disp is op8=0xB5 & disp {  # 0132400 octal = 0xB500, mask 1111_1111_0000_0000 (8 bits), pattern 0xB5
+    # FIXED IMPLEMENTATION: Use same pattern as working JMP instruction
+    X = X + 1;  # ALWAYS increment X first
+    local addr:2 = inst_start + 1 + disp;  # Calculate PC-relative target (same as JMP)
+    if ((X & 0x8000) != 0) goto [addr];  # Jump if X negative after increment
+}
+# SLEIGH Limitation: Cannot implement conditional jumps with computed target addresses
+# Manual implementation would require goto [address] syntax not supported in SLEIGH

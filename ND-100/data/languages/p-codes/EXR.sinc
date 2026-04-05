@@ -1,0 +1,2 @@
+    # EXR: Execute instruction from register — interprets register contents as instruction
+    nd100_exr(rop_src);

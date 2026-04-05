@@ -1,0 +1,4 @@
+:SAT disp is op8=0xF2 & disp {  # 171000 octal = 0xF200, mask 1111_1111_0000_0000 (8 bits), pattern 0xF2
+    # SAT: Set argument to T - T = disp (sign-extended)
+    T = sext(disp:1);
+}

@@ -1,0 +1,3 @@
+    # LBYTP: Load byte from physical memory to A (ND-110/CX)
+    # YAML: D = bank number, T = start address, X = byte offset
+    nd100_lbyt(A, D, T, X);

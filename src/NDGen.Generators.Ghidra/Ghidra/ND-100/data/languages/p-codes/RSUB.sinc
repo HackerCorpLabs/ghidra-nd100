@@ -1,0 +1,26 @@
+# RSUB: Register subtract operation - enhanced with register decoding
+:RSUB disp3 is op10=0x336 & disp3 & fixed3=0x0 {
+    # RSUB: Register subtract operation with proper register decoding
+    # Source register: bits 5-3, Destination register: bits 2-0
+    local src_reg:1 = (inst >> 3) & 0x7;      # Extract source register (bits 5-3)
+    local dst_reg:1 = inst & 0x7;             # Extract destination register (bits 2-0)
+
+    # Get source and destination register values
+    local src_value:2 = GetRopRegister(src_reg);
+    local dst_value:2 = GetRopRegister(dst_reg);
+
+    # Perform subtraction: destination = destination - source
+    local old_dst:2 = dst_value;
+    local diff:4 = zext(dst_value) - zext(src_value);
+    local result:2 = diff:2;
+
+    # Store result back to destination register
+    SetRopRegister(dst_reg, result);
+
+    # Set flags based on subtraction result
+    STS[6,6] = (diff >> 16) != 0;                     # Carry flag (C) - bit 6 (borrow)
+    local overflow:1 = ((old_dst ^ src_value) & (old_dst ^ result) & 0x8000) != 0;
+    STS[5,5] = overflow;                              # Static overflow flag (O) - bit 5
+    STS[4,4] = overflow;                              # Dynamic overflow flag (Q) - bit 4
+    STS[3,3] = (result == 0);                        # Zero flag (Z) - bit 3
+}

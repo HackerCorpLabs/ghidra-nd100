@@ -1,0 +1,5 @@
+:AAB disp is op8=0xF4 & disp {  # 172000 octal = 0xF400, mask 1111_1111_0000_0000 (8 bits), pattern 0xF4
+    # AAB: Add argument to B - B = B + disp (sign-extended)
+    local sext_disp:2 = sext(disp:1);
+    B = B + sext_disp;
+}

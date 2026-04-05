@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiler_spec>
+  <!-- Data organization for 16-bit word-addressed CPU -->
+  <data_organization>
+    <pointer_size value="2"/>
+    <default_alignment value="2"/>
+    <short_size value="2"/>
+    <integer_size value="2"/>
+    <long_size value="4"/>
+    <wchar_size value="2"/>
+    <size_alignment_map>
+      <entry size="2" alignment="2"/>
+      <entry size="4" alignment="2"/>
+    </size_alignment_map>
+  </data_organization>
+
+  <global>
+    <range space="ram"/>
+  </global>
+  
+  <!-- Default calling convention for 16-bit word-addressed architecture -->
+  <default_proto>
+    <prototype name="default" extrapop="0" stackshift="0">
+      <input>
+        <!-- Parameters passed in registers, aligned to words -->
+        <pentry minsize="2" maxsize="2" align="2">
+          <register name="A"/>
+        </pentry>
+        <pentry minsize="2" maxsize="2" align="2">
+          <register name="D"/>
+        </pentry>
+      </input>
+      
+      <!-- Return address on word-addressed stack -->
+      <returnaddress>
+        <varnode space="ram" offset="0" size="2"/>
+      </returnaddress>
+      
+      <!-- Return values in A register -->
+      <output>
+        <pentry minsize="2" maxsize="2" align="2">
+          <register name="A"/>
+        </pentry>
+      </output>
+    </prototype>
+  </default_proto>
+</compiler_spec>

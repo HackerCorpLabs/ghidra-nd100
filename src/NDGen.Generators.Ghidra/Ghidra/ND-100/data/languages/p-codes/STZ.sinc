@@ -1,0 +1,4 @@
+:STZ disp is op8=0x00 & disp {  # 000000 octal = 0x0000, top 8 bits = 0x00
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    *:2 addr = 0;                           # Store zero to memory location
+}

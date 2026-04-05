@@ -1,0 +1,2 @@
+    # 050000 octal = 0x5000, 5-bit mask (addr)
+    T = addr;                                # Load into T register (addr sub-table)

@@ -1,0 +1,27 @@
+# ENTR: Enter stack frame — full constructor (reads inline demand word)
+# C source: ndfunc_entr() in cpu_instr.c
+# Encoding: 0140135₈ = 0xC05D, 16-bit mask
+# Format: ENTR <demand_value> <error_ret> <normal_ret>
+# The demand word follows the instruction in the code stream.
+# On success: jump to inst_start+3 (skipping demand + error_ret words)
+# On overflow: jump to inst_start+2 (error return)
+
+:ENTR entr_demand, entr_err, entr_norm is op16=0xC05D ; entr_demand ; entr_err ; entr_norm {
+    local demand:2 = entr_demand;
+    local smax:2 = *:2 (B - 125);
+    # Check stack overflow: B + demand - 122 > SMAX
+    if ((B + demand - 122) > smax) goto entr_err;
+    local stp:2 = *:2 (B - 126);
+    local oldB:2 = B;
+    B = stp + 128;
+    # Save frame: LINK = L+1, PREVB = oldB, SMAX, STP
+    local link_addr:2 = B - 128;
+    *:2 link_addr = L + 1;
+    local prevb_addr:2 = B - 127;
+    *:2 prevb_addr = oldB;
+    local smax_addr:2 = B - 125;
+    *:2 smax_addr = smax;
+    local stp_addr:2 = B - 126;
+    *:2 stp_addr = B + demand - 122;
+    goto entr_norm;
+}

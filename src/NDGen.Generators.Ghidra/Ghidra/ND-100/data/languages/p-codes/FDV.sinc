@@ -1,0 +1,47 @@
+:FDV disp is op5=0x13 & disp {  # 114000 octal = 0x9800, mask 1111_1000_0000_0000 (5 bits), pattern 0x13
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    # FDV: Floating-point divide accumulator (A,D) = (A,D) / memory[EA]
+    # ND-100 floating point format: A=mantissa, D=exponent
+
+    local mem_mantissa:2 = *:2 addr;         # Load mantissa from memory
+    local mem_exponent:2 = *:2 (addr + 1);   # Load exponent from next word
+
+    # Check for division by zero
+    if (mem_mantissa == 0) goto <div_by_zero>;
+
+    # Floating-point division
+    # 1. Divide mantissas (simplified - should use proper division algorithm)
+    local mantissa_quotient:2 = A / mem_mantissa;
+    A = mantissa_quotient;
+
+    # 2. Subtract exponents
+    local exponent_diff:4 = zext(D) - zext(mem_exponent);
+    D = exponent_diff:2;
+
+    # 3. Check for underflow/overflow
+    if ((exponent_diff & 0x8000) != 0) goto <underflow>;
+    if ((exponent_diff >> 16) != 0) goto <overflow>;
+    goto <done>;
+
+    <div_by_zero>
+    # Division by zero - set appropriate error condition
+    A = 0xFFFF;  # Infinity representation (simplified)
+    D = 0x7FFF;  # Maximum exponent
+    # TODO: Set division by zero flag
+    goto <done>;
+
+    <underflow>
+    # Exponent underflow
+    A = 0;       # Zero result
+    D = 0;
+    goto <done>;
+
+    <overflow>
+    # Exponent overflow
+    A = 0xFFFF;  # Infinity representation
+    D = 0x7FFF;  # Maximum exponent
+    goto <done>;
+
+    <done>
+    # TODO: Set floating-point flags (overflow, underflow, zero, divide by zero)
+}

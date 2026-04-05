@@ -1,0 +1,7 @@
+# SZSB: Store zero in segment bank (STBNK)
+:SZSB disp3 is op10=0x307 & disp3 & fixed3=0x6 {
+    # SZSB: Bank operation with B-relative addressing
+    local addr:2 = B + zext(disp3);           # B-relative addressing with 3-bit displacement
+    *:2 addr = 0;                             # Store zero to bank
+    # SZSB: Segment Table Bank (STB) - privileged memory management operation
+}

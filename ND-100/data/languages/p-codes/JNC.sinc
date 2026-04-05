@@ -1,0 +1,6 @@
+    # JNC: Increment X, jump if X negative (bit 15 set)
+    # Ref: Instructions.SequencingInstructions.cs:178-183 — X++; CJP(X bit 15 != 0)
+    X = X + 1;                                # Increment X first
+    if (X s>= 0) goto <no_jump>;              # Skip if X positive/zero
+    goto rel_target;                          # Jump if X negative
+<no_jump>

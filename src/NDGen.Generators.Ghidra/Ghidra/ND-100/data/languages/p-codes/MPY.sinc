@@ -1,0 +1,9 @@
+:MPY disp is op5=0x14 & disp {  # 120000 octal = 0xA000, top 5 bits = 0x14
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    local memval:2 = *:2 addr;               # Load memory value
+    local tmp:4 = sext(A) * sext(memval);    # 32-bit signed multiply
+    A = tmp:2;                               # Store result (may overflow)
+    local overflow = (tmp s> 32767) || (tmp s< -32768);  # Check overflow
+    STS[5,5] = overflow;                     # Static overflow flag (O) - bit 5
+    STS[4,4] = overflow;                     # Dynamic overflow flag (Q) - bit 4
+}

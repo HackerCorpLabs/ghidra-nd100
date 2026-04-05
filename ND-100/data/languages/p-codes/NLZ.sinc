@@ -1,0 +1,5 @@
+    # NLZ: Normalize — convert integer A to floating point T:A:D
+    # Ref: Instructions.FloatingPointConversion.cs:82
+    # NOT "negate A and jump" — that was completely wrong
+    local scale:2 = disp;                     # Scaling factor (sign-extended by assignment)
+    nd100_normalize(T, A, D, scale);          # Convert integer A to float T:A:D

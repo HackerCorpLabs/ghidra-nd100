@@ -1,0 +1,4 @@
+:STT memref is op5=0x02 & memref {  # Top 5 bits: 00010 = 0x02, mask 1111_1000_0000_0000
+    # STT: Store T register to memory - supports all 8 addressing modes
+    memref = T;                             # Store T to memory using addressing mode
+}

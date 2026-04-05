@@ -1,0 +1,8 @@
+# EXIT: Return from subroutine
+:EXIT is op16=0xCC62 {
+    # EXIT: Return from subroutine
+    # COPY SL DP - Copy stack location to program counter
+    local return_addr:2 = *:2 L;              # Load return address from stack (L points to stack)
+    L = L + 2;                                # Adjust stack pointer (pop return address)
+    goto [return_addr];                       # Jump to return address
+}

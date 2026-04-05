@@ -1,0 +1,11 @@
+    # 176200 octal = 0xFC80, 9-bit mask
+    # BSTA: Store K to bit, then clear K
+    # C source: setbit(dr, bn, K); setbit(STS, K, 0)
+    local mask:2 = 1 << bit4;                   # Create bit mask
+    if (STS[2,2] != 0) goto <setbit>;
+    reg3 = reg3 & ~mask;                        # Clear bit (carry=0)
+    goto <done>;
+<setbit>
+    reg3 = reg3 | mask;                         # Set bit (carry=1)
+<done>
+    STS[2,2] = 0;                               # Clear K after store

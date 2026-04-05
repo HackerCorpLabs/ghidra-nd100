@@ -1,0 +1,2 @@
+    # CNREK: Clear non-reentrant pages (SINTRAN K only) — privileged
+    nd100_page_op(A, D, T, X);

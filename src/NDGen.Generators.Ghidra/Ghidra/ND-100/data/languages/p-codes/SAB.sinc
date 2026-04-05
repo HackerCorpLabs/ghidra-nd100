@@ -1,0 +1,4 @@
+:SAB disp is op8=0xF0 & disp {  # 170000 octal = 0xF000, mask 1111_1111_0000_0000 (8 bits), pattern 0xF0
+    # SAB: Set argument to B - B = disp (sign-extended)
+    B = sext(disp:1);
+}

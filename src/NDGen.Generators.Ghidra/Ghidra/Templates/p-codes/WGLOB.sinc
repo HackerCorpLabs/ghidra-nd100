@@ -1,0 +1,2 @@
+    # WGLOB: Write global pointers — T->STBNK, A->STSRT, D->CMBUK
+    nd100_wglob(T, A, D);

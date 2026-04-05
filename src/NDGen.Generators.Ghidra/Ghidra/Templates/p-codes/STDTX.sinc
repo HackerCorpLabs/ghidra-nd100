@@ -1,0 +1,4 @@
+    # 143306 octal = 0xC6C6, 10-bit mask
+    local ea:2 = X + disp3;                  # T/X addressing (X + 3-bit displacement)
+    *:2 ea = A;                              # Store A to memory location
+    *:2 (ea + 1) = D;                        # Store D to memory location + 1

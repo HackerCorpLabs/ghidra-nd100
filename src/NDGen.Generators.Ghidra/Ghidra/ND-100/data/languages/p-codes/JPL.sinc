@@ -1,0 +1,5 @@
+:JPL disp is op5=0x17 & disp {  # 134000 octal = 0xB800, top 5 bits = 0x17 (no mask)
+    # FIXED IMPLEMENTATION: Use same pattern as working JMP instruction
+    local addr:2 = inst_start + 1 + disp;  # Calculate PC-relative target (same as JMP)
+    if ((A & 0x8000) == 0) goto [addr];  # Jump if A plus/positive (same as JAP)
+}

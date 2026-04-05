@@ -1,0 +1,4 @@
+    # 0146100 octal = 0xCC40, 8-bit alias mask
+    rop_dst = rop_src;                            # Copy source to destination
+    STS[6,6] = 0;                                # C = 0 (no carry)
+    STS[5,5] = 0;                                # O = 0 (no overflow)

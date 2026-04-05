@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiler_spec>
+  <!-- Data organization for 16-bit word-addressed CPU -->
+  <data_organization>
+    <pointer_size value="2"/>
+    <default_alignment value="2"/>
+    <short_size value="2"/>
+    <integer_size value="2"/>
+    <long_size value="4"/>
+    <wchar_size value="2"/>
+    <size_alignment_map>
+      <entry size="2" alignment="2"/>
+      <entry size="4" alignment="2"/>
+    </size_alignment_map>
+  </data_organization>
+
+  <global>
+    <range space="ram"/>
+    <range space="io_space"/>
+  </global>
+
+  <!-- ND-100 has no hardware stack. B register is a frame/base pointer.
+       stackpointer declaration is required by Ghidra to avoid NPE,
+       but stackshift=0 and extrapop=0 mean no stack manipulation. -->
+  <stackpointer register="B" space="ram" growth="negative"/>
+
+  <!-- ND-100 calling convention: no stack push/pop.
+       JPL saves return address at B-128 (LINK slot in frame).
+       Parameters and return values pass through registers. -->
+  <default_proto>
+    <prototype name="default" extrapop="0" stackshift="0">
+      <input>
+        <pentry minsize="2" maxsize="2">
+          <register name="A"/>
+        </pentry>
+        <pentry minsize="2" maxsize="2">
+          <register name="T"/>
+        </pentry>
+        <pentry minsize="2" maxsize="2">
+          <register name="D"/>
+        </pentry>
+        <pentry minsize="2" maxsize="2">
+          <register name="X"/>
+        </pentry>
+      </input>
+
+      <!-- Return address is stored by JPL in the B-relative frame (LINK slot),
+           not pushed onto a stack. Use register to avoid stack assumptions. -->
+      <returnaddress>
+        <register name="P"/>
+      </returnaddress>
+
+      <output>
+        <pentry minsize="2" maxsize="2">
+          <register name="A"/>
+        </pentry>
+      </output>
+
+      <unaffected>
+        <register name="B"/>
+        <register name="L"/>
+      </unaffected>
+    </prototype>
+  </default_proto>
+</compiler_spec>

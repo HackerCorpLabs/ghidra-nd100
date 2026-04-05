@@ -1,0 +1,2 @@
+    # MOVB: Move bytes — src A+D descriptor, dst X+T descriptor
+    nd100_movb(A, X, D, T);

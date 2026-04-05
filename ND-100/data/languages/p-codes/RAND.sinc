@@ -1,0 +1,2 @@
+    # 144400 octal = 0xC900, 10-bit mask
+    rop_dst = rop_dst & rop_src;                 # Bitwise AND registers

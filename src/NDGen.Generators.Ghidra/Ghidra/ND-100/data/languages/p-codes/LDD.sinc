@@ -1,0 +1,6 @@
+:LDD ea_calc is op5=0x05 & ea_calc {  # Top 5 bits: 00101 = 0x05, mask 1111_1000_0000_0000
+    # LDD: Load double word - A from (ea), D from (ea+1) - supports all 8 addressing modes
+    local ea_addr:2 = ea_calc;              # Get the calculated address
+    A = *:2 ea_addr;                        # Load A from memory location
+    D = *:2 (ea_addr + 1);                  # Load D from next word (word-addressed)
+}

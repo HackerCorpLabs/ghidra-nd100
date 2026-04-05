@@ -1,0 +1,5 @@
+# CHREENTPAGES: Change page tables
+:CHREENTPAGES is op16=0xC0C3 {
+    # TODO: Implement P-code for CHREENTPAGES - Change page tables
+    # This instruction changes reentrant page table configuration
+}

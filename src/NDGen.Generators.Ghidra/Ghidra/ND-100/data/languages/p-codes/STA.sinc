@@ -1,0 +1,41 @@
+:STA disp is op5=0x01 & disp {  # Top 5 bits: 00001 = 0x01, mask 1111_1000_0000_0000
+    # STA: Store A register to memory with full addressing mode support
+    # Addressing mode fields: X_bit(10), I_bit(9), B_bit(8)
+    local base_addr:2 = 0;
+    local effective_addr:2 = 0;
+
+    # Determine base address: B-relative (B_bit=1) or P-relative (B_bit=0)
+    if (B_bit == 1) goto <b_relative>;
+
+    # P-relative addressing
+    base_addr = inst_next + sext(disp);
+    goto <check_indexed>;
+
+    <b_relative>
+    base_addr = B + sext(disp);
+
+    <check_indexed>
+    # Apply X-indexing if X_bit is set
+    if (X_bit == 1) goto <apply_indexing>;
+    effective_addr = base_addr;
+    goto <check_indirect>;
+
+    <apply_indexing>
+    effective_addr = base_addr + X;
+
+    <check_indirect>
+    # Apply indirect addressing if I_bit is set
+    if (I_bit == 1) goto <indirect>;
+
+    # Direct addressing - store to effective address
+    *:2 effective_addr = A;
+    goto <done>;
+
+    <indirect>
+    # Indirect addressing - store to address pointed to by effective address
+    local indirect_addr:2 = *:2 effective_addr;
+    *:2 indirect_addr = A;
+
+    <done>
+    # STA does not affect any flags
+}

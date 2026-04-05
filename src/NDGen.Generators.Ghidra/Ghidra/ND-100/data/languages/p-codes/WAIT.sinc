@@ -1,0 +1,5 @@
+:WAIT disp is op8=0xD2 & disp {  # 151000 octal = 0xD200, mask 1111_1111_0000_0000 (8 bits), pattern 0xD2
+    # WAIT: Halt program execution
+    # Note: True WAIT behavior is system-dependent and may require OS interaction
+    # This simplified implementation creates a halt effect
+}

@@ -1,0 +1,5 @@
+# CLPT: Clear segment from the page tables
+:CLPT is op16=0xC145 {
+    # TODO: Implement P-code for CLPT - Clear segment from the page tables
+    # This instruction clears a segment from page table entries
+}

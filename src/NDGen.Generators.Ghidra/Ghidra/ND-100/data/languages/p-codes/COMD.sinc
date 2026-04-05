@@ -1,0 +1,9 @@
+# COMD: Compare decimal (BCD) values - A vs D
+:COMD is op16=0xC052 {
+    # COMD: Compare decimal (BCD) values - A vs D
+    # TODO: Full BCD comparison implementation may need digit-by-digit comparison
+    local diff:4 = zext(A) - zext(D);         # Binary comparison (approximation)
+    STS[2,2] = (diff == 0);                   # Zero flag (Z) - bit 2, A == D
+    STS[6,6] = (diff s< 0);                   # Carry flag (C) - bit 6, A < D
+    # Note: BCD comparison may need special handling for decimal representation
+}

@@ -1,0 +1,6 @@
+:DNZ disp is op8=0xD4 & disp {  # 152000 octal = 0xD400, mask 1111_1111_0000_0000 (8 bits), pattern 0xD4
+    # DNZ: Denormalize floating point number
+    # Note: Complex floating-point denormalization operation
+    # Simplified: reverse of normalization process
+    # Full implementation requires floating-point format knowledge
+}

@@ -1,0 +1,3 @@
+    # MCL: Masked clear — clear selected bits in system register using mask in A
+    local regsel:1 = reg4;
+    nd100_mcl(regsel, A);

@@ -1,0 +1,18 @@
+:ADD disp is op5=0x18 & disp {  # Top 5 bits: 11000 = 0x18, mask 1111_1000_0000_0000
+    # ADD: A = A + (memory value) - P-relative addressing only for now
+    local addr:2 = inst_next + sext(disp);
+    local memval:2 = *:2 addr;
+    local tmp:4 = zext(A) + zext(memval);    # 32-bit add
+    local old_a:2 = A;                       # Save original A for overflow check
+    A = tmp:2;                               # Store result
+
+    # Carry flag: Set if any bit > 15 is set in sum
+    STS[6,6] = (tmp >> 16) != 0;             # Carry flag (C) - bit 6
+
+    # Overflow logic from C# doAdd: both operands same sign, result different sign
+    local bit15differs_1:2 = (old_a & 0x8000) ^ (memval & 0x8000);    # 0 if same signs
+    local bit15differs_2:2 = (memval & 0x8000) ^ (A & 0x8000);        # !=0 if different signs
+    local overflow:1 = (bit15differs_1 == 0) && (bit15differs_2 != 0);
+    STS[5,5] = overflow;                     # Static overflow flag (O) - bit 5
+    STS[4,4] = overflow;                     # Dynamic overflow flag (Q) - bit 4
+}

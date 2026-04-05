@@ -1,0 +1,32 @@
+# BSET: Bit Set — 4 condition variants
+# Encoding: bits 15-11=BOP, bits 10-7=sub-instr, bits 6-3=bn, bits 2-0=dr
+# K = carry flag = STS bit 6
+
+# BSET ZRO: clear bit (bit <- 0)
+:BSET "ZRO "^bit4^" "^reg3_d is op9=0x1F0 & bit4 & reg3 & reg3_d {
+    local mask:2 = 1 << bit4;
+    reg3 = reg3 & ~mask;
+}
+
+# BSET ONE: set bit (bit <- 1)
+:BSET "ONE "^bit4^" "^reg3_d is op9=0x1F1 & bit4 & reg3 & reg3_d {
+    local mask:2 = 1 << bit4;
+    reg3 = reg3 | mask;
+}
+
+# BSET BCM: complement bit (bit <- ~bit)
+:BSET "BCM "^bit4^" "^reg3_d is op9=0x1F2 & bit4 & reg3 & reg3_d {
+    local mask:2 = 1 << bit4;
+    reg3 = reg3 ^ mask;
+}
+
+# BSET BAC: set bit to carry (bit <- K)
+:BSET "BAC "^bit4^" "^reg3_d is op9=0x1F3 & bit4 & reg3 & reg3_d {
+    local mask:2 = 1 << bit4;
+    if (STS[6,1] != 0) goto <setbit>;
+    reg3 = reg3 & ~mask;
+    goto <done>;
+<setbit>
+    reg3 = reg3 | mask;
+<done>
+}

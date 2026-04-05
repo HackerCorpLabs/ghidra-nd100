@@ -1,0 +1,5 @@
+# LBYTP: Load the A register with a byte from physical memory
+:LBYTP is op16=0xC14C {
+    # TODO: Implement P-code for LBYTP - Load the A register with a byte from physical memory
+    # This instruction loads A register with a byte from physical memory address
+}

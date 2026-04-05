@@ -1,0 +1,5 @@
+# LBITP: Load single bit accumulator (K) with physical memory bit
+:LBITP is op16=0xC149 {
+    # TODO: Implement P-code for LBITP - Load single bit accumulator (K) with physical memory bit
+    # This instruction loads the K register with a bit from physical memory
+}

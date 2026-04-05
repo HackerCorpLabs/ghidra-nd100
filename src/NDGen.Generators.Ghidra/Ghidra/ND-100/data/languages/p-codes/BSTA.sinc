@@ -1,0 +1,47 @@
+# BSTA: Store and clear K - 9-bit mask instruction
+# YAML: mask "1111_1111_1000_0000", opcode "176200" (octal)
+# Store K flag to bit, then clear K
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.BitOperationInstructions.cs:239
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Store K flag to bit:
+#    - if (roDst == ROPRegister.Invalid): SetSTSRegister(bopStatusRegister, K)
+#    - else: dest_value = setBitK(GetRopRegister(roDst), bopBN, K); SetRopRegister(roDst, dest_value)
+#
+# 2. Clear K flag:
+#    - regs.currentRegisters.STS.K = false  # Always clear K after store
+#
+# 3. Dual destination modes:
+#    - Register mode: Set/clear bit bopBN in register roDst based on K
+#    - Status mode: Set/clear status register bit when roDst == Invalid
+#
+# 4. setBitK helper function behavior:
+#    - if (K): value |= (1 << bitNo)    # Set bit
+#    - else: value &= ~(1 << bitNo)     # Clear bit
+#
+# 5. Critical two-step operation:
+#    - Step 1: bit ← K (store current K value)
+#    - Step 2: K ← 0 (clear K unconditionally)
+#
+# One-bit accumulator store-and-clear operation for temporary bit storage.
+# Used in bit manipulation sequences where K needs to be saved and reset.
+#
+# P-code implementation (documented - cannot compile due to 9-bit mask):
+# local k_val:1 = STS_K;
+# if (dr == 7) {  # Invalid register = status register mode
+#     SetStatusBit(bn, k_val);
+# } else {
+#     local reg_val:2 = GetRopRegister(dr);
+#     if (k_val) {
+#         reg_val = reg_val | (1 << bn);
+#     } else {
+#         reg_val = reg_val & ~(1 << bn);
+#     }
+#     SetRopRegister(dr, reg_val);
+# }
+# STS_K = 0;  # Always clear K
+#
+# SLEIGH Limitation: Cannot implement due to 9-bit mask
+# Manual implementation would require sub-tables for register combinations

@@ -1,0 +1,40 @@
+# BLDA: Load bit to K - 9-bit mask instruction
+# YAML: mask "1111_1111_1000_0000", opcode "176600" (octal)
+# Load bit value into K flag
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.BitOperationInstructions.cs:284
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Load bit to K flag:
+#    - if (roDst == ROPRegister.Invalid): K = GetSTSRegister(bopStatusRegister)
+#    - else: K = isBitSet(GetRopRegister(roDst), bopBN)
+#
+# 2. Dual bit source modes:
+#    - Register mode: Load bit bopBN from register roDst into K
+#    - Status mode: Load status register bit when roDst == Invalid
+#
+# 3. Critical K flag assignment:
+#    - K ← bit (direct assignment of bit value to K flag)
+#    - Overwrites previous K value completely
+#    - Simple bit transfer operation
+#
+# 4. isBitSet helper function:
+#    - Returns true if bit at position bopBN is set
+#    - Returns false if bit at position bopBN is clear
+#
+# One-bit accumulator load operation for transferring bit values to K.
+# Used to initialize K flag from memory or register bits for subsequent operations.
+#
+# P-code implementation (documented - cannot compile due to 9-bit mask):
+# local bit_val:1;
+# if (dr == 7) {  # Invalid register = status register mode
+#     bit_val = GetStatusBit(bn);
+# } else {
+#     local reg_val:2 = GetRopRegister(dr);
+#     bit_val = (reg_val >> bn) & 1;
+# }
+# STS_K = bit_val;
+#
+# SLEIGH Limitation: Cannot implement due to 9-bit mask
+# Manual implementation would require sub-tables for register combinations

@@ -1,0 +1,5 @@
+:JXN disp is op8=0xB7 & disp {  # 0133400 octal = 0xB700, mask 1111_1111_0000_0000 (8 bits), pattern 0xB7
+    # FIXED IMPLEMENTATION: Use same pattern as working JMP instruction
+    local addr:2 = inst_start + 1 + disp;  # Calculate PC-relative target (same as JMP)
+    if ((X & 0x8000) != 0) goto [addr];  # Jump if X negative (sign bit set)
+}

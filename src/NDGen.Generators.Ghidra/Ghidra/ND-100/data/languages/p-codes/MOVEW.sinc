@@ -1,0 +1,12 @@
+# MOVEW: Word block move
+# 13-bit mask instruction with 3-bit transfer type field
+:MOVEW is op13=0x1C62 {
+    # MOVEW: Word block move - complex instruction with multiple transfer types
+    # Transfer type specified in bits 2-0 (ΔΔ field)
+    # Source: A,D registers  Destination: X,T registers  Count: L register
+    # TODO: Implement full P-code for different transfer types (PT, APT, physical memory)
+
+    # Basic operation: move L words from [A,D] to [X,T]
+    # This is a simplified implementation - full implementation requires handling
+    # different memory mapping modes and privileged operations
+}

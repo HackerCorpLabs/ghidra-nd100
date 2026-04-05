@@ -1,0 +1,5 @@
+# IOXT: Exchange information between I/O system and A register
+:IOXT is op16=0xD10D {
+    # TODO: Implement P-code for IOXT - Exchange information between I/O system and A register
+    # This instruction exchanges data between I/O system and accumulator A
+}

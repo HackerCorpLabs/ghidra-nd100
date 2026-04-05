@@ -1,0 +1,3 @@
+    # SBYTP: Store byte to physical memory from A (ND-110/CX)
+    # YAML: D = bank number, T = start address, X = byte offset
+    nd100_sbyt(A, D, T, X);

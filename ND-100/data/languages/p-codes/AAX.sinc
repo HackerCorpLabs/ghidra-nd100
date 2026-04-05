@@ -1,0 +1,9 @@
+    # 173400 octal = 0xF700, 8-bit mask
+    # AAX: X = X + disp, flags C/O/Q
+    local old_x:2 = X;
+    local imm:2 = disp;
+    local tmp:4 = zext(old_x) + zext(imm);
+    X = tmp:2;
+    STS[6,6] = (tmp >> 16) != 0;                # C = carry out
+    STS[5,5] = scarry(old_x, imm);              # O = signed overflow (dynamic)
+    STS[4,4] = STS[4,4] | STS[5,5];            # Q = sticky overflow

@@ -1,0 +1,14 @@
+# LEAVE: Leave Stack - 16-bit unique instruction (no operands)
+# YAML: mask "1111_1111_1111_1111", opcode "0140136" (octal)
+# Simple stack exit operation
+
+:LEAVE is op16=0xC05E {  # 0140136 octal = 0xC05E
+    # LEAVE: Leave stack frame - simple operation
+    # Restores previous stack pointer and jumps to return address
+
+    local return_addr:2 = *:2 (B - 0x80);    # LINK = (B = 200 octal)
+    local prev_frame:2 = *:2 (B - 0x7F);     # PREVB = (B = 177 octal)
+
+    B = prev_frame;     # Restore previous frame pointer
+    P = return_addr;    # Jump to return address from LINK
+}

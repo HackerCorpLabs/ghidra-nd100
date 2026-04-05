@@ -1,0 +1,3 @@
+    # IRW: Inter-level register write — write A to register at another level
+    local level:1 = bit4;
+    nd100_irw(level, reg3, A);

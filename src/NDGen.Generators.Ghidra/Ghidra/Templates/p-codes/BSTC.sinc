@@ -1,0 +1,11 @@
+    # 176000 octal = 0xFC00, 9-bit mask
+    # BSTC: Store complement of K to bit, then set K to 1
+    # C source: setbit(dr, bn, K^1); setbit(STS, K, 1)
+    local mask:2 = 1 << bit4;                   # Create bit mask
+    if (STS[2,2] == 0) goto <setbit>;
+    reg3 = reg3 & ~mask;                        # Clear bit (carry=1, complement=0)
+    goto <done>;
+<setbit>
+    reg3 = reg3 | mask;                         # Set bit (carry=0, complement=1)
+<done>
+    STS[2,2] = 1;                               # Set K to 1 after store

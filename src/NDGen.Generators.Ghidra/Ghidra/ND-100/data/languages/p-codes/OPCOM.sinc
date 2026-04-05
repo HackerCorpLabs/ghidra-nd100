@@ -1,0 +1,5 @@
+# OPCOM: Operator Communication
+:OPCOM is op16=0xC14E {
+    # TODO: Implement P-code for OPCOM - Operator Communication
+    # This instruction facilitates operator communication
+}

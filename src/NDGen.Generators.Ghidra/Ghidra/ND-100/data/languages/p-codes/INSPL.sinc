@@ -1,0 +1,5 @@
+# INSPL: Insert page in page list
+:INSPL is op16=0xC142 {
+    # TODO: Implement P-code for INSPL - Insert page in page list
+    # This instruction inserts a page in page list (see Appendix B for software description)
+}

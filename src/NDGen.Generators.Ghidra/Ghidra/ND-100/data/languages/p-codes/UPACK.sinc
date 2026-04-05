@@ -1,0 +1,7 @@
+# UPACK: Convert BCD to ASCII
+:UPACK is op16=0xC055 {
+    # UPACK: Convert BCD to ASCII
+    # TODO: Full implementation requires BCD to ASCII conversion logic
+    # Converts packed BCD format to ASCII representation
+    # Used for decimal output and display operations
+}

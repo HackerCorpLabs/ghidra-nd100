@@ -1,0 +1,3 @@
+    # PION: Enable paging and interrupts
+    PONI = 1;
+    IONI = 1;

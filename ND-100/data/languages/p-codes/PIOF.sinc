@@ -1,0 +1,3 @@
+    # PIOF: Disable paging and interrupts
+    PONI = 0;
+    IONI = 0;

@@ -1,0 +1,16 @@
+# ENTR: Enter Stack - 16-bit unique instruction (no operands)
+# YAML: mask "1111_1111_1111_1111", opcode "0140135" (octal)
+# Stack entry with overflow checking
+
+:ENTR is op16=0xC05D {  # 0140135 octal = 0xC05D
+    # ENTR: Enter stack frame with parameter structure
+    # Format: ENTR followed by parameters
+    #   [P+1]: stack demand value in words
+    #   [P+2]: error return address
+    #   [P+3]: return address
+
+    # Simplified ENTR - minimal implementation for SLEIGH
+    # Set new frame pointer and jump to return address
+    B = B + *:2 (inst_start + 2) + 0x80;             # B = B + demand + 200₈
+    P = *:2 (inst_start + 6);                        # Jump to return address [P+3]
+}

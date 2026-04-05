@@ -1,0 +1,21 @@
+# GECO: Customer-specific instruction - 16-bit mask instruction
+# YAML: mask "1111_1111_1111_1111", opcode "0142700" (octal)
+# Customer-specific instruction from GECO (Geophysical Company of Norway)
+#
+# This is a customer-specific instruction included in the standard
+# instruction set from ND-100/CE and later. SINTRAN III tests for
+# GECO during startup. Found in ND-110 microcode.
+#
+# Function unknown - customer-specific geophysical processing operation.
+#
+# P-code implementation:
+# # Unknown customer-specific functionality
+# # Likely performs specialized geophysical computation
+# # Implementation would require GECO documentation
+#
+# SLEIGH Limitation: Cannot implement due to 16-bit mask
+# Manual implementation would be:
+# :GECO {
+#     # Customer-specific geophysical operation
+#     # Implementation details unavailable
+# }

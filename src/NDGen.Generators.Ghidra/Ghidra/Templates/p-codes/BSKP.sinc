@@ -1,0 +1,39 @@
+# BSKP: Bit Skip — 4 condition variants
+# Encoding: bits 15-11=BOP, bits 10-7=sub-instr, bits 6-3=bn, bits 2-0=dr
+# K = carry flag = STS bit 6
+
+# BSKP ZRO: skip if bit = 0
+:BSKP "ZRO "^bit4^" "^reg3_d^" "^skip_next is op9=0x1F4 & bit4 & reg3 & reg3_d & skip_next {
+    local mask:2 = 1 << bit4;
+    if ((reg3 & mask) != 0) goto <no_skip>;
+    goto skip_next;
+<no_skip>
+}
+
+# BSKP ONE: skip if bit = 1
+:BSKP "ONE "^bit4^" "^reg3_d^" "^skip_next is op9=0x1F5 & bit4 & reg3 & reg3_d & skip_next {
+    local mask:2 = 1 << bit4;
+    if ((reg3 & mask) == 0) goto <no_skip>;
+    goto skip_next;
+<no_skip>
+}
+
+# BSKP BCM: skip if bit != K (bit complement match)
+:BSKP "BCM "^bit4^" "^reg3_d^" "^skip_next is op9=0x1F6 & bit4 & reg3 & reg3_d & skip_next {
+    local mask:2 = 1 << bit4;
+    local bitval:1 = ((reg3 & mask) != 0);
+    local carry:1 = STS[6,1];
+    if (bitval == carry) goto <no_skip>;
+    goto skip_next;
+<no_skip>
+}
+
+# BSKP BAC: skip if bit == K (bit and carry)
+:BSKP "BAC "^bit4^" "^reg3_d^" "^skip_next is op9=0x1F7 & bit4 & reg3 & reg3_d & skip_next {
+    local mask:2 = 1 << bit4;
+    local bitval:1 = ((reg3 & mask) != 0);
+    local carry:1 = STS[6,1];
+    if (bitval != carry) goto <no_skip>;
+    goto skip_next;
+<no_skip>
+}

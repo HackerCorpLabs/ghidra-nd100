@@ -1,0 +1,40 @@
+:FSB disp is op5=0x11 & disp {  # 104000 octal = 0x8800, mask 1111_1000_0000_0000 (5 bits), pattern 0x11
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    # FSB: Floating-point subtract from accumulator (A,D) = (A,D) - memory[EA]
+    # ND-100 floating point format: A=mantissa, D=exponent
+
+    local mem_mantissa:2 = *:2 addr;         # Load mantissa from memory
+    local mem_exponent:2 = *:2 (addr + 1);   # Load exponent from next word
+
+    # Simplified floating-point subtraction
+    local exp_diff:2 = D - mem_exponent;
+
+    # For now, implement basic case where exponents are equal
+    if (exp_diff == 0) goto <same_exp>;
+
+    # Different exponents - simplified handling
+    goto <sub_mantissas>;
+
+    <same_exp>
+    # Same exponents - can directly subtract mantissas
+    local mantissa_diff:4 = zext(A) - zext(mem_mantissa);
+    A = mantissa_diff:2;
+
+    # Check for negative result (simplified)
+    if ((mantissa_diff & 0x80000000) != 0) goto <handle_negative>;
+    goto <done>;
+
+    <sub_mantissas>
+    # Simplified subtraction for different exponents
+    A = A - mem_mantissa;
+    D = D - mem_exponent;
+    goto <done>;
+
+    <handle_negative>
+    # Handle negative result (simplified)
+    A = ~A + 1;  # Two's complement
+    # TODO: Set sign flag
+
+    <done>
+    # TODO: Set floating-point flags (overflow, underflow, zero, sign)
+}

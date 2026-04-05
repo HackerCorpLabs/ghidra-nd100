@@ -1,0 +1,8 @@
+# MOVBF: Move bytes forward (optimized byte copy)
+:MOVBF is op16=0xC05A {
+    # MOVBF: Move bytes forward (optimized byte copy)
+    # Uses T register for source field, D register for destination field
+    # TODO: Full implementation requires byte field manipulation
+    # Similar to MOVB but optimized for forward direction copying
+    # After execution, bit 15 of D and T point to end of moved field
+}

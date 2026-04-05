@@ -1,0 +1,41 @@
+# TRA: Transfer internal register to A - 12-bit mask instruction
+# YAML: mask "1111_1111_1111_0000", opcode "0150000" (octal)
+# Transfer internal register contents to A register
+#
+# ✅ C# EMULATOR ANALYSIS COMPLETE ✅
+# Source: E:\Dev\Repos\Ronny\RetroCore\Emulated.HW\ND\CPU\ND100\Instructions.AccumulatorTransferInstructions.cs:79
+#
+# VERIFIED BEHAVIOR FROM C# EMULATOR:
+# 1. Register selection:
+#    - r = (AccumulatorTransferToARegister)regs.fetched.atiRegister
+#    - Register encoded in bits 3-0 of instruction
+#
+# 2. Register read operation:
+#    - tmpVal = regs.doTRA(r)  # Read from internal register
+#    - if (tmpVal >= 0): A = tmpVal  # Only update if register exists
+#
+# 3. Non-implemented register handling:
+#    - Non-implemented registers return -1
+#    - A register cleared (not updated) for non-implemented registers
+#    - Optional hardware (panel, paging) may not be present
+#
+# 4. Supported registers (from comments):
+#    - PANS (0), STS (1), OPR (2), PSR (3), PVL (4)
+#    - IIC (5), PID (6), PIE (7), CSR (10), ACTL (11)
+#    - ALD (12), PES (13), PCR (14), PEA (15), CS (17)
+#
+# 5. Privileged instruction - requires appropriate privilege level
+#
+# Internal register access for system status and control.
+# Used for reading system state, interrupt status, and hardware configuration.
+#
+# P-code implementation (documented - cannot compile due to 12-bit mask):
+# local reg_id:1 = inst[3,0];
+# local reg_val:2 = ReadInternalRegister(reg_id);
+# if (reg_val != 0xFFFF) {  # Register exists
+#     A = reg_val;
+# }
+# # else: A unchanged for non-implemented registers
+#
+# SLEIGH Limitation: Cannot implement due to 12-bit mask
+# Manual implementation would require sub-tables for register enumeration

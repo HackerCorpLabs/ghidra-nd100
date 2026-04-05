@@ -1,0 +1,8 @@
+    # 030000 octal = 0x3000, 5-bit mask (ea_addr)
+    # STF: Store floating accumulator — T to (EA), A to (EA+1), D to (EA+2)
+    local ea:2 = ea_addr;
+    *:2 ea = T;
+    local ea1:2 = ea + 1;
+    *:2 ea1 = A;
+    local ea2:2 = ea + 2;
+    *:2 ea2 = D;

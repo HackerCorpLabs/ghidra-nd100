@@ -1,0 +1,6 @@
+<opinions>
+	<!-- ND-100 processor opinion file for BPUN file format loader -->
+    <constraint loader="ND100 BPUN (Bootable Punched Tape)" compilerSpecID="default">
+        <constraint primary="BPUN" processor="ND-100" endian="big" size="16" />
+    </constraint>
+</opinions>

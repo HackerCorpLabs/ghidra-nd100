@@ -1,0 +1,43 @@
+:FAD disp is op5=0x10 & disp {  # 0100000 octal = 0x8000, mask 1111_1000_0000_0000 (5 bits), pattern 0x10
+    local addr:2 = inst_start + 1 + disp;   # P-relative addressing (word-addressed)
+    # FAD: Floating-point add to accumulator (A,D) = (A,D) + memory[EA]
+    # ND-100 floating point format: A=mantissa, D=exponent
+    # Memory contains another floating point number in same format
+
+    local mem_mantissa:2 = *:2 addr;         # Load mantissa from memory
+    local mem_exponent:2 = *:2 (addr + 1);   # Load exponent from next word
+
+    # Simplified floating-point addition (full implementation would require:
+    # 1. Exponent alignment 2. Mantissa addition 3. Normalization 4. Overflow checking)
+    local exp_diff:2 = D - mem_exponent;
+
+    # For now, implement basic case where exponents are equal
+    if (exp_diff == 0) goto <same_exp>;
+
+    # Different exponents - simplified handling
+    # In real implementation, would align mantissas by shifting
+    goto <add_mantissas>;
+
+    <same_exp>
+    # Same exponents - can directly add mantissas
+    local mantissa_sum:4 = zext(A) + zext(mem_mantissa);
+    A = mantissa_sum:2;
+
+    # Check for mantissa overflow (simplified)
+    if ((mantissa_sum >> 16) != 0) goto <normalize>;
+    goto <done>;
+
+    <add_mantissas>
+    # Simplified addition for different exponents
+    A = A + mem_mantissa;
+    D = D + mem_exponent;
+    goto <done>;
+
+    <normalize>
+    # Normalize result by adjusting exponent (simplified)
+    A = A >> 1;  # Shift mantissa right
+    D = D + 1;   # Increment exponent
+
+    <done>
+    # TODO: Set floating-point flags (overflow, underflow, zero)
+}

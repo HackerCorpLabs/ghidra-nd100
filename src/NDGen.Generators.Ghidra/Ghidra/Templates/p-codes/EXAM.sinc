@@ -1,0 +1,2 @@
+    # EXAM: Examine physical memory — read from address A+D into T
+    T = nd100_exam(A, D);

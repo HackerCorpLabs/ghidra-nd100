@@ -1,0 +1,4 @@
+:SAX disp is op8=0xF3 & disp {  # 171400 octal = 0xF300, mask 1111_1111_0000_0000 (8 bits), pattern 0xF3
+    # SAX: Set argument to X - X = disp (sign-extended)
+    X = sext(disp:1);
+}

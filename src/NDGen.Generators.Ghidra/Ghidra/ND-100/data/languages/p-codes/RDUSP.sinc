@@ -1,0 +1,5 @@
+# RDUSP: Read a physical memory word without using cache
+:RDUSP is op16=0xC150 {
+    # TODO: Implement P-code for RDUSP - Read a physical memory word without using cache
+    # This instruction reads a physical memory word bypassing cache
+}

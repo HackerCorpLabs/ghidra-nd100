@@ -1,0 +1,2 @@
+    # RGLOB: Read global pointers — STBNK->T, STSRT->A, CMBUK->D
+    nd100_rglob(T, A, D);

@@ -1,0 +1,9 @@
+# PIOF: Memory Management and Interrupt System OFF - 16-bit unique instruction
+# YAML: mask "1111_1111_1111_1111", opcode "150405" (octal)
+# Combines IOF and POF functionality
+
+:PIOF is op16=0xD905 {  # 150405 octal = 0xD905
+    # PIOF: Disable both memory management and interrupt systems
+    IONI = 0;  # Disable interrupt system
+    PONI = 0;  # Disable memory management system
+}

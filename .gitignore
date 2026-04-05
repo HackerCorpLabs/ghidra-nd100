@@ -1,0 +1,15 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+output/
+.claude/
+
+# Gradle (generated ND-100 extension build)
+ND-100/.gradle/
+ND-100/build/
+ND-100/dist/
+
+# Root-level dist zips copied from ND-100/dist
+ghidra_*.zip

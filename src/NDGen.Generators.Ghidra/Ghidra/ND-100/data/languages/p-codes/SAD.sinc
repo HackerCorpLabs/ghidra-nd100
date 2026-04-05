@@ -1,0 +1,28 @@
+# SAD: Shift A and D registers connected - Non-contiguous mask instruction
+# YAML: mask "1111_1001_1000_0000", opcode "0154600" (octal)
+# Shift operations on connected A and D registers
+#
+# Performs various shift operations on A and D registers as
+# a connected 32-bit double word (A=high, D=low):
+# - Double arithmetic left/right shifts
+# - Double logical left/right shifts
+# - Double rotate left/right with/without carry
+#
+# Every shift places last discarded bit in multi-shift flag (M).
+# M flag (bit 8 of STS register) can be input for next shift.
+#
+# P-code implementation (example for double arithmetic right shift):
+# local shift_count:1 = shift_counter & 0x1F;
+# local last_bit:1 = 0;
+# local double_reg:4 = (zext(A) << 16) | zext(D);
+# for (i = 0; i < shift_count; i++) {
+#     last_bit = double_reg & 1;
+#     double_reg = double_reg s>> 1;
+# }
+# A = double_reg[31,16];
+# D = double_reg[15,0];
+# STS[8,8] = last_bit;  # Set multi-shift flag
+#
+# SLEIGH Limitation: Cannot implement due to non-contiguous mask
+# Pattern "1111_1001_1000_0000" has gaps that cause conflicts
+# Manual implementation would require complex sub-table hierarchy

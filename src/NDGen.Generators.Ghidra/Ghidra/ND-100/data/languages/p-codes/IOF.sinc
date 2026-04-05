@@ -1,0 +1,10 @@
+# IOF: Interrupt System OFF - 16-bit unique instruction (no operands)
+# YAML: mask "1111_1111_1111_1111", opcode "150401" (octal)
+# Complete 16-bit instruction word, no displacement field
+
+:IOF is op16=0xD901 {  # 150401 octal = 0xD901
+    # IOF: Disable interrupt system
+    # Clears IONI flag to disable interrupts
+    IONI = 0;  # Disable interrupt system flag
+    # Note: Continues operation at same program level
+}

@@ -1,0 +1,2 @@
+    # LBYT: Load byte from memory to A — address from T+X/2
+    nd100_lbyt(A, T, X);

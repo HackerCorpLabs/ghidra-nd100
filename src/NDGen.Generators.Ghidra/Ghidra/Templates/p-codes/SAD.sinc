@@ -1,0 +1,29 @@
+    # SAD: Shift A:D double register (32-bit) — 4 types: Arithmetic/ROT/ZIN/LIN
+    # C source: ShiftDoubleReg((A<<16)|D, operand)
+    local ad:4 = (zext(A) << 16) | zext(D);
+    local stype:2 = (shift_operand >> 7) & 3;
+    local sdir:2 = (shift_operand >> 5) & 1;
+    local cnt:2 = shift_operand & 0x1F;
+
+    if (sdir != 0) goto <right>;
+    if (stype == 1) goto <rot_left>;
+    ad = ad << cnt;
+    goto <split>;
+<rot_left>
+    ad = (ad << cnt) | (ad >> (32 - cnt));
+    goto <split>;
+
+<right>
+    local rcount:2 = 32 - cnt;
+    if (stype == 1) goto <rot_right>;
+    if (stype == 2) goto <zin_right>;
+    ad = ad s>> rcount;
+    goto <split>;
+<rot_right>
+    ad = (ad >> rcount) | (ad << (32 - rcount));
+    goto <split>;
+<zin_right>
+    ad = ad >> rcount;
+<split>
+    A = ad(2);                                # High 16 bits
+    D = ad:2;                                 # Low 16 bits

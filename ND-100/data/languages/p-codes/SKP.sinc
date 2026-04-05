@@ -1,0 +1,51 @@
+# SKP: Skip next instruction if condition true
+# Full constructor to include skip_next sub-table for decompiler support
+# Encoding: op5=0x18, bits 10-8=condition, bits 7-6=0, bits 5-3=src, bits 2-0=dst
+# Conditions from YAML/ND-100 manual:
+#   0=EQL (Z=1), 1=GEQ (S=0), 2=GRE (S^O=0), 3=MGRE (C=1),
+#   4=UEQ (Z=0), 5=LSS (S=1), 6=LST (S^O=1), 7=MLST (C=0)
+# C source: IsSkip() in cpu_instr.c
+
+:SKP "IF" skp_dr_d skp_cond skp_sr_d^" "^skip_next is op5=0x18 & skp_cond & skp_fixed=0x0 & skp_sr_d & skp_dr_d & skp_sr & skp_dr & skip_next {
+    local diff:2 = skp_dr - skp_sr;
+    local cond:1 = skp_cond;
+    local should_skip:1 = 0;
+    # Compute flags for the (dr - sr) operation
+    local s:1 = (diff >> 15) != 0;            # Sign flag
+    local z:1 = (diff == 0);                  # Zero flag
+    local o:1 = sborrow(skp_dr, skp_sr);      # Overflow flag
+    local c:1 = (skp_dr >= skp_sr);            # Carry (no borrow) — unsigned >=
+    if (cond != 0) goto <not0>;
+    should_skip = z;                           # EQL: Z=1
+    goto <check>;
+<not0>
+    if (cond != 1) goto <not1>;
+    should_skip = (s == 0);                    # GEQ: S=0
+    goto <check>;
+<not1>
+    if (cond != 2) goto <not2>;
+    should_skip = (s == o);                    # GRE: S^O=0 (overflow-aware signed >=)
+    goto <check>;
+<not2>
+    if (cond != 3) goto <not3>;
+    should_skip = c;                           # MGRE: C=1 (unsigned >=)
+    goto <check>;
+<not3>
+    if (cond != 4) goto <not4>;
+    should_skip = (z == 0);                    # UEQ: Z=0
+    goto <check>;
+<not4>
+    if (cond != 5) goto <not5>;
+    should_skip = s;                           # LSS: S=1
+    goto <check>;
+<not5>
+    if (cond != 6) goto <not6>;
+    should_skip = (s != o);                    # LST: S^O=1 (overflow-aware signed <)
+    goto <check>;
+<not6>
+    should_skip = (c == 0);                    # MLST: C=0 (unsigned <)
+<check>
+    if (should_skip == 0) goto <no_skip>;
+    goto skip_next;
+<no_skip>
+}

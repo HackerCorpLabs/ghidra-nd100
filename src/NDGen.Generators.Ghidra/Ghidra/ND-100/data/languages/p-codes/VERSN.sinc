@@ -1,0 +1,30 @@
+# VERSN: Read ND-110 CPU version and installation number - 16-bit mask instruction
+# YAML: mask "1111_1111_1111_1111", opcode "140133" (octal)
+# ND-110/ND-120 ONLY instruction
+#
+# Loads CPU version information into three registers:
+#
+# A register: [15-3] Print version, [2-0] ALD field
+# T register: [15-0] Microprogram version
+# D register: [15-8] unused, [7-0] Installation number byte
+#
+# Installation number addressing:
+# - 16-byte installation number
+# - A register bits [11-8] specify byte address (0-15)
+# - Must execute VERSN 16 times to read complete installation number
+#
+# P-code implementation:
+# local byte_addr:1 = (A >> 8) & 0xF;
+# A = (print_version << 3) | ald_field;
+# T = microprogram_version;
+# D = (D & 0xFF00) | installation_number[byte_addr];
+#
+# SLEIGH Limitation: Cannot implement due to 16-bit mask
+# Manual implementation would be:
+# :VERSN {
+#     local byte_addr:1 = (A >> 8) & 0xF;
+#     # System-specific version information loading
+#     A = system_print_version;
+#     T = system_microprogram_version;
+#     D = (D & 0xFF00) | system_installation_byte[byte_addr];
+# }
