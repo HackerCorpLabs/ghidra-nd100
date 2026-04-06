@@ -58,10 +58,8 @@ REM Inject module version into extension.properties (@extversion@ is replaced by
 if not defined MODULE_VERSION set "MODULE_VERSION=0.1.0"
 powershell -Command "(Get-Content '%OUT%\extension.properties') -replace '@moduleversion@', '%MODULE_VERSION%' | Set-Content '%OUT%\extension.properties'"
 
-pushd "%OUT%"
-call gradlew.bat --no-daemon clean buildExtension
+call "%OUT%\gradlew.bat" -p "%OUT%" --no-daemon clean buildExtension
 set "ERR=%ERRORLEVEL%"
-popd
 if not "%ERR%"=="0" (
   echo ERROR: Gradle buildExtension failed
   exit /b 1
