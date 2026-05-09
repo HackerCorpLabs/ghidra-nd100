@@ -21,10 +21,19 @@ export DOTNET_ROLL_FORWARD ?= Major
 # ---------------------------------------------------------------------------
 # OS detection. We dispatch per-recipe via $(IS_WIN) so each command runs
 # natively on either cmd.exe or POSIX sh.
+#
+# IS_WIN is set ONLY when the active shell is cmd-like. On Windows from
+# Git Bash / MSYS2 / Cygwin / WSL, `uname` exists and we use POSIX recipes
+# instead — this is what GitHub Actions does with `shell: bash`.
 # ---------------------------------------------------------------------------
 ifeq ($(OS),Windows_NT)
-  IS_WIN  := 1
-  GRADLEW := gradlew.bat
+  ifeq ($(shell uname -s 2>/dev/null),)
+    IS_WIN  := 1
+    GRADLEW := gradlew.bat
+  else
+    IS_WIN  :=
+    GRADLEW := ./gradlew
+  endif
 else
   IS_WIN  :=
   GRADLEW := ./gradlew
