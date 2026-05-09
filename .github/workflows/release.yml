@@ -5,14 +5,15 @@ on:
     tags:
       - 'v*'
 
-# Update GHIDRA_VERSION when upgrading Ghidra.
-# The download URL is resolved automatically from the GitHub Releases API.
+# Update GHIDRA_VERSION when upgrading Ghidra. The download URL is resolved
+# automatically from the GitHub Releases API.
 env:
   GHIDRA_VERSION: '12.0.4'
+  DOTNET_ROLL_FORWARD: Major
 
 jobs:
   release:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
 
@@ -33,70 +34,85 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Resolve Ghidra download URL
-        id: ghidra-url
-        shell: pwsh
-        run: |
-          $release = Invoke-RestMethod "https://api.github.com/repos/NationalSecurityAgency/ghidra/releases/tags/Ghidra_${{ env.GHIDRA_VERSION }}_build"
-          $asset = $release.assets | Where-Object { $_.name -like "ghidra_*_PUBLIC_*.zip" } | Select-Object -First 1
-          if (-not $asset) { throw "No Ghidra zip found for version ${{ env.GHIDRA_VERSION }}" }
-          Write-Host "Ghidra asset: $($asset.name)"
-          echo "url=$($asset.browser_download_url)" >> $env:GITHUB_OUTPUT
-          echo "name=$($asset.name)" >> $env:GITHUB_OUTPUT
-
       - name: Cache Ghidra
         id: cache-ghidra
         uses: actions/cache@v4
         with:
-          path: C:\ghidra
-          key: ghidra-${{ env.GHIDRA_VERSION }}
+          path: ${{ runner.temp }}/ghidra
+          key: ghidra-${{ env.GHIDRA_VERSION }}-linux
 
       - name: Download and extract Ghidra
         if: steps.cache-ghidra.outputs.cache-hit != 'true'
-        shell: pwsh
         run: |
-          $url = "${{ steps.ghidra-url.outputs.url }}"
-          $zip = "${{ steps.ghidra-url.outputs.name }}"
-          Write-Host "Downloading $url"
-          Invoke-WebRequest -Uri $url -OutFile $zip
-          Expand-Archive -Path $zip -DestinationPath C:\ghidra
-          Remove-Item $zip
+          set -euo pipefail
+          api="https://api.github.com/repos/NationalSecurityAgency/ghidra/releases/tags/Ghidra_${GHIDRA_VERSION}_build"
+          url=$(curl -sSL "$api" | jq -r '.assets[] | select(.name | test("ghidra_.*_PUBLIC_.*\\.zip")) | .browser_download_url' | head -1)
+          test -n "$url" || { echo "No Ghidra zip found for ${GHIDRA_VERSION}"; exit 1; }
+          echo "Downloading $url"
+          curl -sSL -o /tmp/ghidra.zip "$url"
+          mkdir -p "${RUNNER_TEMP}/ghidra"
+          unzip -q /tmp/ghidra.zip -d "${RUNNER_TEMP}/ghidra"
+          rm /tmp/ghidra.zip
+
+      - name: Resolve GHIDRA_INSTALL_DIR
+        run: |
+          dir=$(ls -d "${RUNNER_TEMP}/ghidra"/ghidra_*_PUBLIC | head -1)
+          test -n "$dir" || { echo "Ghidra extraction failed"; exit 1; }
+          echo "GHIDRA_INSTALL_DIR=$dir" >> "$GITHUB_ENV"
 
       - name: Extract version
         id: version
-        shell: pwsh
         run: |
-          $v = "${{ github.ref_name }}" -replace '^v', ''
-          echo "value=$v" >> $env:GITHUB_OUTPUT
+          v="${GITHUB_REF_NAME#v}"
+          echo "value=$v" >> "$GITHUB_OUTPUT"
 
       - name: Build extension
-        shell: cmd
         env:
-          GHIDRA_INSTALL_DIR: C:\ghidra\ghidra_${{ env.GHIDRA_VERSION }}_PUBLIC
           MODULE_VERSION: ${{ steps.version.outputs.value }}
-        run: build.bat
+        run: make all
 
       - name: Rename zip
-        shell: pwsh
+        id: artifact
         run: |
-          $version = "${{ steps.version.outputs.value }}"
-          $src = Get-ChildItem -File "ND-100/dist" -Filter "ghidra_*_ND-100.zip" | Select-Object -First 1
-          if (-not $src) {
-            throw "Extension zip not found in ND-100/dist — Gradle buildExtension likely failed."
-          }
-          $leafName = "ghidra-nd100-${version}.zip"
-          $dst = Join-Path $src.Directory.FullName $leafName
-          if (Test-Path $dst) { Remove-Item -Force $dst }
-          Rename-Item -Path $src.FullName -NewName $leafName
-          Write-Host "Released as: $dst"
+          set -euo pipefail
+          src=$(ls -1 ND-100/dist/ghidra_*_ND-100.zip | head -1)
+          test -n "$src" || { echo "Extension zip not found in ND-100/dist"; exit 1; }
+          dst="ND-100/dist/ghidra-nd100-${{ steps.version.outputs.value }}.zip"
+          mv -f "$src" "$dst"
+          echo "path=$dst" >> "$GITHUB_OUTPUT"
+          echo "Released as: $dst"
 
-      - name: Create release
-        shell: pwsh
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghidra-nd100-${{ steps.version.outputs.value }}
+          path: ${{ steps.artifact.outputs.path }}
+          if-no-files-found: error
+
+      - name: Upload diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostics-${{ steps.version.outputs.value }}
+          path: |
+            ND-100/build/**
+            ND-100/data/languages/*.sla
+            ND-100/data/languages/*.slaspec
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Create or update release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $version = "${{ steps.version.outputs.value }}"
-          gh release create "${{ github.ref_name }}" `
-            "ND-100/dist/ghidra-nd100-${version}.zip" `
-            --title "${{ github.ref_name }}" `
-            --generate-notes
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          zip="${{ steps.artifact.outputs.path }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists — replacing asset"
+            gh release upload "$tag" "$zip" --clobber
+          else
+            gh release create "$tag" "$zip" \
+              --title "$tag" \
+              --generate-notes
+          fi
