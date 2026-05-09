@@ -187,42 +187,49 @@ public class ProgLoader extends AbstractProgramWrapperLoader {
 			}
 		}
 
-		// Plate comment with the full header summary at bank-1 start.
-		if (bank1Start != null) {
-			StringBuilder meta = new StringBuilder();
-			meta.append(String.format("PROG file: %s\n", provider.getName()));
-			meta.append(String.format("Format: %s\n", h.isOneBank() ? "1-bank" : "2-bank"));
-			meta.append(String.format("Start address:   0%06o (0x%04X)\n", h.start, h.start));
-			meta.append(String.format("Restart address: 0%06o (0x%04X)\n", h.restart, h.restart));
-			meta.append(String.format("Bank 1: 0%06o..0%06o (%d words)\n",
-					h.first1, h.last1, h.bank1Words()));
-			if (!h.isOneBank()) {
-				meta.append(String.format("Bank 2: 0%06o..0%06o (%d words)",
-						h.first2, h.last2, h.bank2Words()));
-			}
-			else {
-				meta.append("Bank 2: (none)");
-			}
-			listing.setComment(bank1Start, CodeUnit.PLATE_COMMENT, meta.toString());
-		}
-
-		// Entry point (Start). The spec places it in bank 1 in every example we
-		// have, so we resolve it in the default space; users can move it to the
-		// bank-2 overlay manually if a future PROG places it there.
+		// Resolve the entry point first; both the labels and the plate
+		// comment hang off it so the user lands on the metadata when they
+		// navigate to the entry.
 		Address entryAddr = space.getAddress((h.start & 0xFFFFL) * wordSize);
+
+		// Build a filename-derived label so multiple PROG files in the same
+		// project don't collide on a generic `START`.
+		String progName = sanitizeName(provider.getName());
+
+		// Plate comment with the full header summary at the entry point.
+		StringBuilder meta = new StringBuilder();
+		meta.append(String.format("PROG file: %s\n", provider.getName()));
+		meta.append(String.format("Format: %s\n", h.isOneBank() ? "1-bank" : "2-bank"));
+		meta.append(String.format("Start address:   0%06o (0x%04X)\n", h.start, h.start));
+		meta.append(String.format("Restart address: 0%06o (0x%04X)\n", h.restart, h.restart));
+		meta.append(String.format("Bank 1: 0%06o..0%06o (%d words)\n",
+				h.first1, h.last1, h.bank1Words()));
+		if (!h.isOneBank()) {
+			meta.append(String.format("Bank 2: 0%06o..0%06o (%d words)",
+					h.first2, h.last2, h.bank2Words()));
+		}
+		else {
+			meta.append("Bank 2: (none)");
+		}
+		listing.setComment(entryAddr, CodeUnit.PLATE_COMMENT, meta.toString());
+
 		symtab.addExternalEntryPoint(entryAddr);
 		try {
+			// Primary label: <basename> — distinctive in the symbol tree.
+			symtab.createLabel(entryAddr, progName, null, SourceType.IMPORTED);
+			// Secondary, generic label so cross-loader habits keep working.
 			symtab.createLabel(entryAddr, "START", null, SourceType.IMPORTED);
 		}
 		catch (InvalidInputException e) {
-			log.appendMsg("Warning: could not create START label: " + e.getMessage());
+			log.appendMsg("Warning: could not create entry label: " + e.getMessage());
 		}
-		log.appendMsg(String.format("Entry: 0%06o (0x%04X)", h.start, h.start));
+		log.appendMsg(String.format("Entry (%s): 0%06o (0x%04X)", progName, h.start, h.start));
 
 		if (h.restart != h.start) {
 			Address restartAddr = space.getAddress((h.restart & 0xFFFFL) * wordSize);
 			symtab.addExternalEntryPoint(restartAddr);
 			try {
+				symtab.createLabel(restartAddr, progName + "_RESTART", null, SourceType.IMPORTED);
 				symtab.createLabel(restartAddr, "RESTART", null, SourceType.IMPORTED);
 			}
 			catch (InvalidInputException e) {
@@ -304,6 +311,26 @@ public class ProgLoader extends AbstractProgramWrapperLoader {
 		int hi = p.readByte(off) & 0xFF;
 		int lo = p.readByte(off + 1) & 0xFF;
 		return ((hi << 8) | lo) & 0xFFFF;
+	}
+
+	/**
+	 * Turn a file name into a Ghidra-safe identifier: drop a trailing
+	 * `.prog` extension (case-insensitive), drop a SINTRAN-style leading
+	 * `:`, and replace any character outside [A-Za-z0-9_] with `_`.
+	 * Falls back to "PROG" if the result would be empty or start with a
+	 * digit.
+	 */
+	private static String sanitizeName(String fileName) {
+		String s = fileName;
+		int slash = Math.max(s.lastIndexOf('/'), s.lastIndexOf('\\'));
+		if (slash >= 0) s = s.substring(slash + 1);
+		if (s.toLowerCase().endsWith(".prog")) s = s.substring(0, s.length() - 5);
+		if (s.startsWith(":")) s = s.substring(1);
+		s = s.replaceAll("[^A-Za-z0-9_]", "_");
+		if (s.isEmpty() || !Character.isJavaIdentifierStart(s.charAt(0))) {
+			s = "PROG_" + s;
+		}
+		return s;
 	}
 
 	private byte[] readBytes(ByteProvider p, long off, long count, String what) throws IOException {
