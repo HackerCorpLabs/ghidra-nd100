@@ -81,7 +81,8 @@ endif
 .DEFAULT_GOAL := help
 
 .PHONY: help all build codegen scaffold inject-version gradle gradle-only \
-        submodule refresh clean distclean check-dotnet check-ghidra
+        submodule refresh clean distclean check-dotnet check-ghidra install \
+        uninstall _check_release
 
 # ---------------------------------------------------------------------------
 # Help (default target)
@@ -99,6 +100,8 @@ ifdef IS_WIN
 	@echo   make gradle-only Alias for 'make scaffold gradle'
 	@echo   make submodule   Initialize nd100-definitions submodule if missing
 	@echo   make refresh     Pull latest nd100-definitions submodule revision
+	@echo   make install     Build, then unpack the extension into Ghidra's user dir
+	@echo   make uninstall   Remove the installed extension from Ghidra's user dir
 	@echo   make clean       Remove ND-100\dist, ND-100\build, ND-100\.gradle
 	@echo   make distclean   clean + remove generated files under ND-100\
 	@echo.
@@ -116,6 +119,8 @@ else
 	@echo "  make gradle-only Alias for 'make scaffold gradle'"
 	@echo "  make submodule   Initialize nd100-definitions submodule if missing"
 	@echo "  make refresh     Pull latest nd100-definitions submodule revision"
+	@echo "  make install     Build, then unpack the extension into Ghidra's user dir"
+	@echo "  make uninstall   Remove the installed extension from Ghidra's user dir"
 	@echo "  make clean       Remove ND-100/{dist,build,.gradle}"
 	@echo "  make distclean   clean + remove generated files under ND-100/"
 	@echo ""
@@ -289,4 +294,80 @@ else
 	rm -f  "$(OUT)/build.gradle" "$(OUT)/settings.gradle" \
 	       "$(OUT)/extension.properties" "$(OUT)/Module.manifest" \
 	       "$(OUT)/gradlew" "$(OUT)/gradlew.bat"
+endif
+
+# ---------------------------------------------------------------------------
+# Install: build the extension, then unpack into Ghidra's user-settings
+# extensions directory. Picks the user-settings location based on OS:
+#   Linux/macOS: $HOME/.config/ghidra/<release_name>/Extensions/
+#   Windows:     %APPDATA%/ghidra/<release_name>/Extensions/
+#
+# The <release_name> is derived from application.properties inside the
+# Ghidra install (lowercased name + version + release.name), e.g.
+# `ghidra_12.0.4_PUBLIC`. This matches the directory Ghidra picks itself,
+# which may not be the same as `basename $(GHIDRA_INSTALL_DIR)`.
+#
+# Override either of:
+#   GHIDRA_USER_DIR=...     user-settings root
+#   GHIDRA_RELEASE=...      release name component (skip auto-detection)
+# ---------------------------------------------------------------------------
+
+# Default user-settings dir per platform.
+ifdef IS_WIN
+  GHIDRA_USER_DIR ?= $(APPDATA)/ghidra
+else
+  GHIDRA_USER_DIR ?= $(HOME)/.config/ghidra
+endif
+
+# Auto-derive the Ghidra release name from application.properties when
+# the user hasn't pinned it explicitly. Reads `application.name`,
+# `application.version`, and `application.release.name` and joins them
+# with underscores; lowercases the name component.
+ifeq ($(strip $(GHIDRA_RELEASE)),)
+ifneq ($(strip $(GHIDRA_INSTALL_DIR)),)
+  _APP_PROPS := $(GHIDRA_INSTALL_DIR)/Ghidra/application.properties
+  _APP_NAME    := $(shell awk -F= '/^application\.name=/{print tolower($$2)}'    "$(_APP_PROPS)" 2>/dev/null)
+  _APP_VERSION := $(shell awk -F= '/^application\.version=/{print $$2}'         "$(_APP_PROPS)" 2>/dev/null)
+  _APP_RELEASE := $(shell awk -F= '/^application\.release\.name=/{print $$2}'   "$(_APP_PROPS)" 2>/dev/null)
+  ifneq ($(strip $(_APP_NAME))$(strip $(_APP_VERSION))$(strip $(_APP_RELEASE)),)
+    GHIDRA_RELEASE := $(_APP_NAME)_$(_APP_VERSION)_$(_APP_RELEASE)
+  endif
+endif
+endif
+
+_check_release:
+	@if [ -z "$(GHIDRA_RELEASE)" ] && [ -z "$(IS_WIN)" ]; then \
+	  echo "ERROR: could not derive release name from $(GHIDRA_INSTALL_DIR)/Ghidra/application.properties"; \
+	  echo "       Override with: make install GHIDRA_RELEASE=ghidra_<version>_PUBLIC"; \
+	  exit 1; \
+	fi
+
+## install: Build, then unpack the extension into Ghidra's user dir
+install: all check-ghidra _check_release
+ifdef IS_WIN
+	@echo === Installing extension to $(GHIDRA_USER_DIR)/$(GHIDRA_RELEASE)/Extensions
+	@powershell -NoProfile -Command "$$dest = '$(GHIDRA_USER_DIR)/$(GHIDRA_RELEASE)/Extensions'; if (-not '$(GHIDRA_RELEASE)') { Write-Error 'GHIDRA_RELEASE is empty; pass it explicitly'; exit 1 }; $$zip = Get-ChildItem '$(OUT)/dist' -Filter 'ghidra_*_ND-100.zip' | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if (-not $$zip) { Write-Error 'No built zip in $(OUT)/dist'; exit 1 }; if (-not (Test-Path $$dest)) { New-Item -ItemType Directory -Force -Path $$dest | Out-Null }; if (Test-Path (Join-Path $$dest 'ND-100')) { Remove-Item -Recurse -Force (Join-Path $$dest 'ND-100') }; Expand-Archive -Force -Path $$zip.FullName -DestinationPath $$dest; Write-Host \"=== Installed to $$dest/ND-100 (from $$($$zip.Name))\""
+else
+	@dest="$(GHIDRA_USER_DIR)/$(GHIDRA_RELEASE)/Extensions"; \
+	 zip="$$(ls -1t "$(OUT)/dist/"ghidra_*_ND-100.zip 2>/dev/null | head -1)"; \
+	 if [ -z "$$zip" ]; then echo "ERROR: no built zip in $(OUT)/dist/"; exit 1; fi; \
+	 echo "=== Installing extension to $$dest"; \
+	 mkdir -p "$$dest"; \
+	 rm -rf "$$dest/ND-100"; \
+	 unzip -q "$$zip" -d "$$dest"; \
+	 echo "=== Installed to $$dest/ND-100 (from $$(basename "$$zip"))"
+endif
+
+## uninstall: Remove the installed extension from Ghidra's user dir
+uninstall: check-ghidra _check_release
+ifdef IS_WIN
+	@powershell -NoProfile -Command "$$dest = '$(GHIDRA_USER_DIR)/$(GHIDRA_RELEASE)/Extensions/ND-100'; if (Test-Path $$dest) { Remove-Item -Recurse -Force $$dest; Write-Host \"=== Uninstalled from $$dest\" } else { Write-Host \"=== Nothing to uninstall (not present at $$dest)\" }"
+else
+	@dest="$(GHIDRA_USER_DIR)/$(GHIDRA_RELEASE)/Extensions/ND-100"; \
+	 if [ -d "$$dest" ]; then \
+	   rm -rf "$$dest"; \
+	   echo "=== Uninstalled from $$dest"; \
+	 else \
+	   echo "=== Nothing to uninstall (not present at $$dest)"; \
+	 fi
 endif
