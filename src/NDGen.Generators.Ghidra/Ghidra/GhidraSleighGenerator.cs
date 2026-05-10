@@ -515,13 +515,23 @@ namespace NDGen.Generators.Ghidra
         }
 
         /// <summary>
-        /// Builds a complete Ghidra extension with SLEIGH compilation and ZIP packaging
+        /// Builds a complete Ghidra extension with SLEIGH compilation and ZIP packaging.
         /// </summary>
-        /// <param name="ghidraInstallPath">Path to Ghidra installation</param>
+        /// <param name="ghidraInstallPath">Path to Ghidra installation. If null/empty, falls back to the
+        /// GHIDRA_INSTALL_DIR environment variable.</param>
         /// <param name="version">Extension version (e.g., "11.4")</param>
         /// <returns>Path to created extension ZIP file</returns>
-        public string BuildCompleteExtension(string ghidraInstallPath = @"C:\Utils\Ghidra\ghidra_12.0.4_PUBLIC", string version = "12.0")
+        public string BuildCompleteExtension(string? ghidraInstallPath = null, string version = "12.0")
         {
+            if (string.IsNullOrWhiteSpace(ghidraInstallPath))
+            {
+                ghidraInstallPath = Environment.GetEnvironmentVariable("GHIDRA_INSTALL_DIR");
+            }
+            if (string.IsNullOrWhiteSpace(ghidraInstallPath))
+            {
+                throw new InvalidOperationException(
+                    "Ghidra install path not provided and GHIDRA_INSTALL_DIR is not set.");
+            }
             Console.WriteLine("=== Building Complete ND-100 Ghidra Extension ===");
             
             // Step 1: Generate SLEIGH files (already done by Generate())
@@ -612,7 +622,10 @@ ND-100:BE:16:default
 
         private void CompileSleighSpecification(string ghidraInstallPath)
         {
-            var sleighCompiler = Path.Combine(ghidraInstallPath, "support", "sleigh.bat");
+            // Pick the platform-appropriate sleigh launcher: `sleigh.bat` on Windows,
+            // bare `sleigh` (the shell wrapper) elsewhere.
+            var sleighName = OperatingSystem.IsWindows() ? "sleigh.bat" : "sleigh";
+            var sleighCompiler = Path.Combine(ghidraInstallPath, "support", sleighName);
             var slaspecPath = Path.Combine(_languagesPath, "nd100.slaspec");
 
             if (!File.Exists(sleighCompiler))
