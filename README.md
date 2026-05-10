@@ -200,8 +200,3 @@ git submodule update --init --recursive
 ## Examples
 
 The **`examples/`** directory is reserved for **small, rights-cleared ND-100 binaries** used to regression-test disassembly and analysis. None are required for the build.
-
----
-
-**GitHub "About" field (suggested one-liner):**  
-Ghidra processor module for the ND-100 architecture (Sleigh specification, disassembly, and analysis support).
