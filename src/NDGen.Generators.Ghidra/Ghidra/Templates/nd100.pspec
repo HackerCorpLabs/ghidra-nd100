@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <processor_spec>
   <programcounter register="P"/>
-  
+
   <!-- Register data for ND-100 processor registers -->
-  <register_data>      
+  <register_data>
     <!-- Current Active Registers (context-sensitive aliases) -->
     <register name="A"/>       <!-- Current Accumulator -->
     <register name="D"/>       <!-- Current Extension register -->
@@ -135,5 +135,16 @@
     <property key="interruptLevels" value="16"/>    <!-- 16 interrupt levels -->
     <property key="internalInterruptLevel" value="14"/>  <!-- Internal interrupts on level 14 -->
     <property key="maxMemorySize" value="16777216"/> <!-- 16MB max memory (24-bit) -->
+
+    <!--
+      Disable Ghidra's heuristic non-returning function discovery. SINTRAN
+      III code typically saves L at function entry (`COPY SL DA; STA *save`)
+      and returns via `JMP I *save`. Ghidra cannot statically distinguish
+      that from a tail call, and so flags such functions as no-return,
+      which then makes every `JPL` to them a flow terminator and stops
+      disassembly at the call site. Users can re-enable this analyzer in
+      Auto-Analyze options if needed for a specific binary.
+    -->
+    <property key="Analyzers.Non-Returning Functions - Discovered" value="false"/>
   </properties>
 </processor_spec>
