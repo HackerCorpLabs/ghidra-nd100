@@ -87,8 +87,15 @@ public class ProgLoader extends AbstractProgramWrapperLoader {
 			return first2 == BANK2_EMPTY_FIRST && last2 == BANK2_EMPTY_LAST;
 		}
 
-		int bank1Words() { return (last1 - first1 + 1) & 0xFFFF; }
-		int bank2Words() { return isOneBank() ? 0 : ((last2 - first2 + 1) & 0xFFFF); }
+		// Word count is (last - first + 1). A bank may legitimately span the
+		// ENTIRE 0..0177777 (0..0xFFFF) address range, in which case the count
+		// is 65536 (0x10000). Do NOT mask with 0xFFFF here: that would wrap a
+		// full-64K bank back to 0 words, make probeProg() reject the file, and
+		// (if it slipped through) create a zero-length memory block. Callers
+		// guarantee first <= last, so the result is always in 1..65536.
+		// Regression seen with SKATTEJAKT.PROG (first1=0, last1=0xFFFF).
+		int bank1Words() { return (last1 & 0xFFFF) - (first1 & 0xFFFF) + 1; }
+		int bank2Words() { return isOneBank() ? 0 : ((last2 & 0xFFFF) - (first2 & 0xFFFF) + 1); }
 	}
 
 	@Override

@@ -312,9 +312,16 @@ endif
 #   GHIDRA_RELEASE=...      release name component (skip auto-detection)
 # ---------------------------------------------------------------------------
 
-# Default user-settings dir per platform.
-ifdef IS_WIN
-  GHIDRA_USER_DIR ?= $(APPDATA)/ghidra
+# Default user-settings dir. Ghidra's user-settings root depends on the OS,
+# NOT on which shell make runs under: on Windows it is always %APPDATA%\ghidra,
+# even when driven from Git Bash / MSYS2 (where IS_WIN is empty because `uname`
+# exists — see the OS-detection block above). Keying this off IS_WIN was the
+# bug: `make install` under Git Bash landed in ~/.config/ghidra, which Ghidra
+# never reads, so the freshly-built extension was installed where it couldn't
+# be seen. Decide on $(OS) instead. Normalise APPDATA's backslashes to forward
+# slashes so the POSIX-shell recipes (unzip -d, rm -rf) handle the path cleanly.
+ifeq ($(OS),Windows_NT)
+  GHIDRA_USER_DIR ?= $(subst \,/,$(APPDATA))/ghidra
 else
   GHIDRA_USER_DIR ?= $(HOME)/.config/ghidra
 endif
