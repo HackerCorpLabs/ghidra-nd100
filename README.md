@@ -38,7 +38,7 @@ Every path above is relative to the repository root (the directory containing `.
 - Operand handling for defined addressing modes
 - File format loaders:
   - **BPUN** (Bootable Punched Tape), including the FloMon variant
-  - **:PROG** (SINTRAN III executable), 1-bank and 2-bank (bank 2 as overlay)
+  - **PROG** (SINTRAN III executable), 1-bank and 2-bank (bank 2 as overlay)
   - **BRF** (Binary Relocatable Format, ND-60.066.04) — emulates the ND
     Relocating Loader: relocation, fix-ups, ENTR/REF symbol linking, COMMON
     blocks, per-unit checksum verification; annotates the listing with file,
