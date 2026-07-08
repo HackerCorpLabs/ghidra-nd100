@@ -31,3 +31,12 @@ else {
 	throw new GradleException("GHIDRA_INSTALL_DIR is not defined!")
 }
 //----------------------END "DO NOT MODIFY" SECTION-------------------------------
+
+// Exclude build infrastructure and source artifacts from the packaged extension zip.
+buildExtension {
+	exclude 'gradle/**'
+	exclude 'README.md'
+	exclude 'lib/*-src.zip'
+	exclude 'ghidra_scripts/'
+	exclude 'os/'
+}

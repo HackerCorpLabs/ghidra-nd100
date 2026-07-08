@@ -13,3 +13,5 @@ ND-100/dist/
 
 # Root-level dist zips copied from ND-100/dist
 ghidra_*.zip
+
+hs_err_pid*.log

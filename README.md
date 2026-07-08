@@ -36,7 +36,14 @@ Every path above is relative to the repository root (the directory containing `.
 - Sleigh specification for the ND-100 instruction set
 - Disassembly and instruction decoding
 - Operand handling for defined addressing modes
-- Java analyzers: BPUN loader, TPE test loader, IO/MON call analysis, stack frame analysis
+- File format loaders:
+  - **BPUN** (Bootable Punched Tape), including the FloMon variant
+  - **:PROG** (SINTRAN III executable), 1-bank and 2-bank (bank 2 as overlay)
+  - **BRF** (Binary Relocatable Format, ND-60.066.04) — emulates the ND
+    Relocating Loader: relocation, fix-ups, ENTR/REF symbol linking, COMMON
+    blocks, per-unit checksum verification; annotates the listing with file,
+    unit, and symbol metadata comments
+- Java analyzers: TPE test loader, IO/MON call analysis, stack frame analysis
 - Initial analysis support (control flow, references)
 
 ## Status
